@@ -1,0 +1,42 @@
+Quest configs:
+
+Cook's Assistant
+Config 29
+0 = not started
+1 = started
+2 = completed
+
+Config 695
+0 = flour is not ready
+1 = flour is ready
+
+
+
+restless ghost
+config 107
+0 = ghost not started
+1 = ghost started
+2 = ghostspeak amulet aquired
+3 = spoke to ghost, now we need skull
+4 = we got the skull, now we need to "return it to the ghost"
+
+
+
+rune mysteries
+config 63
+0 = not started
+1 = we got the air talisman, lets give it to the head wizard
+2 = we returned the air talismans
+3 = we got the package, lets return it
+4 = we returned the package, lets get notes
+5 = lets return notes
+
+
+
+romeo and juliet
+config 144
+10 = started, now we have to speak to juliet
+20 = we spoke to juliet, now its time to leave the love message to romeo
+30 = we have to speak to the father
+40 = we have to talk to the apothecary
+50 = we need cadava berries 
