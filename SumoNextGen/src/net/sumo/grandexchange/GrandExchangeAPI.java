@@ -87,7 +87,7 @@ public class GrandExchangeAPI {
 			if (!getItem().equals(itemName)) {
 				selectBuyItem(itemName);
 			}
-			if (getPrice() != price) {
+			if (getPrice() != price  ) {
 				setPrice(price);
 			}
 			if (getAmount() != amount) {
@@ -134,6 +134,12 @@ public class GrandExchangeAPI {
 			if (itemSelection() != null && preIndex() != null && !chatboxText().isVisible()) {
 				if (!enteredText().equals(itemName)) {
 					if (searchText().getMessage().length() == 47) {
+						try {
+							parent.sleep(3000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						parent.getKeyboard().typeString(itemName, false);
 						new ConditionalSleep(3000, 3500) {
 							@Override
@@ -192,9 +198,45 @@ public class GrandExchangeAPI {
 
 	}
 	
+	public void createSellOffer(int itemName, int price, int amount) {
+		if (parent.getGrandExchange().isOpen()) {
+			if (!parent.getGrandExchange().isSellOfferOpen()) {
+				initSellOffer(itemName);
+			}
+			setPrice(price);
+			setAmount(amount);
+			if (confirmButton() != null && getItem().equals(itemName) && getPrice() == price && getAmount() == amount) {
+				confirmButton().interact("Confirm");
+				new ConditionalSleep(2500, 3000) {
+					@Override
+					public boolean condition() {
+						return !parent.getGrandExchange().isSellOfferOpen();
+					}
+				}.sleep();
+			}
+
+		}
+
+	}
+	
 	
 
 	private void initSellOffer(String itemName) {
+		if (parent.getGrandExchange().isOpen() && !parent.getGrandExchange().isSellOfferOpen()) {
+			if (parent.getInventory().contains(itemName)) {
+				Item sellItem = parent.getInventory().getItem(itemName);
+				sellItem.interact("Offer");
+			}
+			new ConditionalSleep(2500, 3000) {
+				@Override
+				public boolean condition() {
+					return parent.getGrandExchange().isSellOfferOpen();
+				}
+			}.sleep();
+		}
+	}
+	
+	private void initSellOffer(int itemName) {
 		if (parent.getGrandExchange().isOpen() && !parent.getGrandExchange().isSellOfferOpen()) {
 			if (parent.getInventory().contains(itemName)) {
 				Item sellItem = parent.getInventory().getItem(itemName);

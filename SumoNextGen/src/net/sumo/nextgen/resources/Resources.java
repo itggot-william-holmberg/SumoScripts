@@ -131,7 +131,8 @@ public class Resources {
 	public static NPC lastFish;
 	public static AttackStyle attackStyle;
 	
-	public static int SELLABLE_ITEMS[] = {1511,438,436};
+	public static int SELLABLE_ITEMS[] = {1511,438,436,439,437};
 	public static boolean soldItems = false;
 	public static boolean withdrawItems = false;
+	
 }

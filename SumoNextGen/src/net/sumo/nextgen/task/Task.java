@@ -1370,41 +1370,62 @@ public abstract class Task {
 
 	}
 	
+	public void buyItems(){
+		if (!s.getGrandExchange().isOpen()) { //Checks if ge is open
+			ge.openGE(); //open ge randomly using booth or npc
+		} else {
+			Resources.BUY_LIST.forEach(item -> {
+				int coins = (int) s.inventory.getAmount(995);
+				while(!s.inventory.contains(item)){
+					ge.collectItems(false);
+					ge.createBuyOffer(item, coins, 1);
+				}
+				if(s.inventory.contains(item)){
+					Resources.BUY_LIST.remove(item);
+				}
+			});
+		}
+	}
+
 	public void sellSellables(){
 		if (!s.getGrandExchange().isOpen()) { //Checks if ge is open
 			ge.openGE(); //open ge randomly using booth or npc
 		} else {
-			s.log("tjena");
-			for(int i = 0; i<Resources.SELLABLE_ITEMS.length;){
-				int id = Resources.SELLABLE_ITEMS[i] + 1;
-				if(s.inventory.contains(id)){
-					s.log("bank contains "+ id);
+			if(s.inventory.contains(Resources.SELLABLE_ITEMS)){
+				for(int i = 0; i<Resources.SELLABLE_ITEMS.length;){
+				s.log(i);
+				int id = Resources.SELLABLE_ITEMS[i];
+				s.log(id);
+				while(s.inventory.contains(id)){
+					s.log("inventory contains "+ id);
 					Item item = s.inventory.getItem(id);
 					String itemName = item.getName();
 					int amount = item.getAmount();
 					ge.collectItems(false); //collect items (boolean true -> to bank, false -> inventory)
 					ge.createSellOffer(itemName, 10, amount); //Sells all of the specified items in inventory at specified price ( 0 = all, int = specified amount)
-					i++;
-					sleep(1000);
-				}else{
-					s.log("no items");
 					sleep(1000);
 				}
+				i++;
+				}
+			}else{
+				ge.collectItems(false);
+				Resources.soldItems = true;
 			}
+			
 			
 		}
 	}
-	
-	public void withdrawSellables(){
+
+	public void withdrawSellables() {
 		NPC banker = s.npcs.closest("Banker");
 		if (bankIsOpen()) {
-			while(s.bank.contains(Resources.SELLABLE_ITEMS)){
-				if(s.bank.getWithdrawMode() != BankMode.WITHDRAW_NOTE){
-				s.getBank().enableMode(BankMode.WITHDRAW_NOTE);		
-				}else{
-					for(int i = 0; i<Resources.SELLABLE_ITEMS.length;){
-						if(s.bank.contains(Resources.SELLABLE_ITEMS[i])){
-							s.log("bank contains "+ Resources.SELLABLE_ITEMS[i]);
+			while (s.bank.contains(Resources.SELLABLE_ITEMS)) {
+				if (s.bank.getWithdrawMode() != BankMode.WITHDRAW_NOTE) {
+					s.getBank().enableMode(BankMode.WITHDRAW_NOTE);
+				} else {
+					for (int i = 0; i < Resources.SELLABLE_ITEMS.length;) {
+						if (s.bank.contains(Resources.SELLABLE_ITEMS[i])) {
+							s.log("bank contains " + Resources.SELLABLE_ITEMS[i]);
 							s.bank.withdrawAll(Resources.SELLABLE_ITEMS[i]);
 							i++;
 							sleep(1000);
@@ -1414,7 +1435,7 @@ public abstract class Task {
 				sleep(1000);
 			}
 			sleep(1000, 2300);
-			if(!s.bank.contains(Resources.SELLABLE_ITEMS)){
+			if (!s.bank.contains(Resources.SELLABLE_ITEMS)) {
 				Resources.withdrawItems = true;
 			}
 		} else {
@@ -1423,7 +1444,6 @@ public abstract class Task {
 		}
 
 	}
-	
 
 	private void openBank() {
 		if (playerInArea(Banks.LUMBRIDGE_UPPER)) {
@@ -1541,9 +1561,24 @@ public abstract class Task {
 			if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {
 				test++;
 			} else {
+				if(s.inventory.contains(gear.getFullGear().get(i).toString())){
+					Item item = s.inventory.getItem(gear.getFullGear().get(i).toString());
+					if (item.hasAction("Wield")) {
+						s.log("lets wield");
+						item.interact("wield");
+					} else if (item.hasAction("Wear")) {
+						s.log("lets wear");
+						item.interact("wear");
+					}
+					sleep(3000);
+					if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {
+						test++;
+					}
+				}else{
 				if (!Resources.WITHDRAW_LIST.contains(gear.getFullGear().get(i))) {
 					s.log("we need" + gear.getFullGear().get(i));
 					Resources.WITHDRAW_LIST.add(gear.getFullGear().get(i));
+				}
 				}
 			}
 		}

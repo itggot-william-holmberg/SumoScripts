@@ -7,12 +7,9 @@ import org.osbot.rs07.api.ui.EquipmentSlot;
 
 public enum GearSetups {
 
-	RANGE_SETUP(Gears.voidChest, Gears.voidLegs, Gears.voidHat, Gears.voidGloves, Gears.antiDragonShield, Gears.runeCrossbow,
-			Gears.avasAttractor, Gears.dragonBoots, Gears.glory, Gears.ringOfLife, Gears.broadBolts),
-	STARTER_MELEE_SETUP2(Gears.leatherBody, Gears.monkLegs, Gears.ironFullHelm, Gears.ironKiteShield,Gears.bronzeLongSword, Gears.amuletOfStrength),
-	STARTER_MELEE_SETUP(Gears.monkChest, Gears.monkLegs, Gears.ironFullHelm, Gears.ironKiteShield,Gears.ironScimmy, Gears.amuletOfStrength),
-	COW_MELEE_SETUP(Gears.monkChest, Gears.monkLegs, Gears.ironFullHelm, Gears.ironKiteShield, Gears.mithScimmy, Gears.amuletOfStrength);
-	// MELEE_GEAR();
+	
+	STARTER_MELEE_SETUP(Gears.leatherBody, Gears.ironPlateLegs, Gears.ironFullHelm, Gears.ironKiteShield,Gears.bronzeLongSword, Gears.amuletOfStrength);
+	
 	List<String> _fullGear =  new ArrayList<String>();
 	private String _chest;
 	private String _legs;

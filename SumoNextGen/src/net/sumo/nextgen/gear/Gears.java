@@ -16,8 +16,7 @@ public class Gears {
 	
 	//gear 1
 	public static String ironKiteShield = "Iron kiteshield";
-	public static String monkChest = "Monk's robe top";
-	public static String monkLegs = "Monk's robe";
+	public static String ironPlateLegs = "Iron platelegs";
 	public static String amuletOfStrength = "Amulet of strength";
 	public static String ironScimmy = "Iron scimitar";
 	public static String ironFullHelm = "Iron full helm";

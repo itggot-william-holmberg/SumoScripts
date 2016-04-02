@@ -8,9 +8,10 @@ import net.sumo.nextgen.resources.Resources;
 public class BuyItem extends Task {
 	int totalPrice;
 	boolean soldItems = false;
+
 	@Override
 	public boolean active() {
-		if(!Resources.BUY_LIST.isEmpty()){
+		if (!Resources.BUY_LIST.isEmpty()) {
 			return true;
 		}
 		return false;
@@ -19,25 +20,27 @@ public class BuyItem extends Task {
 	@Override
 	public void execute() {
 		Resources.CURRENT_STATE = "we have to buy items!!!!!";
-		if(playerInArea(Areas.GRAND_EXCHANGE_AREA)){
-			if(!Resources.soldItems){
-				if(!Resources.withdrawItems){
+		if (playerInArea(Areas.GRAND_EXCHANGE_AREA)) {
+			if (!Resources.soldItems) {
+				if (!Resources.withdrawItems) {
 					withdrawSellables();
-				}else{
+				} else {
 					sellSellables();
 				}
+			} else {     //if buylist is not empty.
+				s.log("lets buy items");
+				buyItems();
 			}
-		}else{
+		} else {
 			Resources.CURRENT_STATE = "Lets walk to GE";
 			webWalk(Areas.GRAND_EXCHANGE_AREA);
 		}
-		
+
 	}
-	
-	/*public void getTotalPrice(List<String> string){
-		string.forEach(item->{
-			ge.get
-		});
-	}*/
+
+	/*
+	 * public void getTotalPrice(List<String> string){ string.forEach(item->{
+	 * ge.get }); }
+	 */
 
 }
