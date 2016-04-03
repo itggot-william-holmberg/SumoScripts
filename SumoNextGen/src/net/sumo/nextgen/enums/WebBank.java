@@ -5,6 +5,8 @@ import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.map.constants.Banks;
 import org.osbot.rs07.script.Script;
 
+import net.sumo.nextgen.resources.Areas;
+
 public enum WebBank {
 
     DRAYNOR(Banks.DRAYNOR),
@@ -25,7 +27,8 @@ public enum WebBank {
     DUEL_ARENA(Banks.DUEL_ARENA),
     PEST_CONTROL(Banks.PEST_CONTROL),
     CANIFIS(Banks.CANIFIS),
-    TZHAAR(Banks.TZHAAR);
+    TZHAAR(Banks.TZHAAR),
+	GRANDEXCHANGE(Areas.GRAND_EXCHANGE_AREA);
 
     private final Area area;
 

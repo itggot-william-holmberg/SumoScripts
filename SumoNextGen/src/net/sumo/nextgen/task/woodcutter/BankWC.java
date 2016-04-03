@@ -7,7 +7,7 @@ public class BankWC extends Task{
 
 	@Override
 	public boolean active() {
-		if(shouldWoodcut() && playerInArea(currentWCAssigment().getBankArea()) && !shouldCutTree()){
+		if(shouldWoodcut() && playerInArea(getClosestBank()) && !shouldCutTree()){
 			return true;
 		}
 		return false;
@@ -29,7 +29,7 @@ public class BankWC extends Task{
 		}else {
 			if(!inventoryContains(axeName)){
 				s.log("lets withdraw, from bankwc");
-				withdraw(axeName);
+				withdrawNeededItems(axeName);
 			}
 		}	
 		

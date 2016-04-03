@@ -7,7 +7,7 @@ public class WalkToBankFromFight extends Task {
 
 	@Override
 	public boolean active() {
-		if (shouldFight() && !playerInArea(currentFightingAssignment().getBankArea()) && !shouldFight(currentFightingAssignment().getGear())) {
+		if (shouldFight() && !playerInArea(getClosestBank()) && !shouldFight(currentFightingAssignment().getGear())) {
 			return true;
 		}
 		return false;
@@ -16,6 +16,6 @@ public class WalkToBankFromFight extends Task {
 	@Override
 	public void execute() {
 		Resources.CURRENT_STATE = "Walking to Bank";
-		webWalk(currentFightingAssignment().getBankPos());
+		webWalk(getClosestBank().getRandomPosition());
 	}
 }

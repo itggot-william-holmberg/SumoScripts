@@ -7,7 +7,7 @@ public class WalkToBankFromWC extends Task{
 
 	@Override
 	public boolean active() {
-		if(shouldWoodcut() && !playerInArea(currentWCAssigment().getBankArea()) && !shouldCutTree()){
+		if(shouldWoodcut() && !playerInArea(getClosestBank()) && !shouldCutTree()){
 			return true;
 		}
 		return false;
@@ -16,7 +16,7 @@ public class WalkToBankFromWC extends Task{
 	@Override
 	public void execute() {
 		Resources.CURRENT_STATE = "Walking to Bank";
-		webWalk(currentWCAssigment().getBankArea());		
+		webWalk(getClosestBank().getRandomPosition());		
 	}
 
 }

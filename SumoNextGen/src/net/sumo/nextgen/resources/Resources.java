@@ -9,11 +9,11 @@ import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Skill;
 
+import net.sumo.nextgen.enums.AttackStyle;
 import net.sumo.nextgen.enums.MiningAssigment;
 import net.sumo.nextgen.queststage.CooksAssistantStage;
 import net.sumo.nextgen.stage.Stage;
 import net.sumo.nextgen.stage.TaskTest;
-import net.sumo.nextgen.task.enums.AttackStyle;
 
 public class Resources {
 
@@ -129,10 +129,12 @@ public class Resources {
 	public static boolean shouldConnect = false;
 	public static String[] COW_LOOT = { "Cowhide" };
 	public static NPC lastFish;
-	public static AttackStyle attackStyle;
+	public static Skill attackStyle;
 	
 	public static int SELLABLE_ITEMS[] = {1511,438,436,439,437};
 	public static boolean soldItems = false;
 	public static boolean withdrawItems = false;
+	public static List<TaskTest>taskTest = new ArrayList<TaskTest>();
+	public static Skill currentSkill;
 	
 }

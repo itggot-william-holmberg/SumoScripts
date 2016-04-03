@@ -8,14 +8,16 @@ import net.sumo.nextgen.resources.Resources;
 
 public enum Stage {
 
-	THIEVING(StageType.SKILL, Skill.THIEVING), WOODCUTTING(StageType.SKILL, Skill.WOODCUTTING), COOKS_ASSISTANT(StageType.QUEST), SHEEP_SHEARER(StageType.QUEST), THE_RESTLESS_GHOST(StageType.QUEST), RUNE_MYSTERIES(StageType.QUEST), ROMEO_JULIET(StageType.QUEST), DEV_MODE(StageType.OTHER)
-	, MINING(StageType.SKILL, Skill.WOODCUTTING), STRENGTH(StageType.COMBAT, Skill.STRENGTH), ATTACK(StageType.COMBAT, Skill.ATTACK), DEFENCE(StageType.COMBAT, Skill.DEFENCE);
+	THIEVING(StageType.SKILL, Skill.THIEVING), WOODCUTTING(StageType.SKILL, Skill.WOODCUTTING), COOKS_ASSISTANT(StageType.QUEST, Quest.COOKS_ASSISTANT.toString()), SHEEP_SHEARER(StageType.QUEST, Quest.SHEEP_SHEARER.toString()), THE_RESTLESS_GHOST(StageType.QUEST, Quest.THE_RESTLESS_GHOST.toString()), RUNE_MYSTERIES(StageType.QUEST, Quest.RUNE_MYSTERIES.toString()), ROMEO_JULIET(StageType.QUEST, Quest.ROMEO_JULIET.toString()), DEV_MODE(StageType.OTHER, Quest.RAG_AND_BONE_MAN.toString())
+	, MINING(StageType.SKILL, Skill.WOODCUTTING), STRENGTH(StageType.COMBAT, Skill.STRENGTH), ATTACK(StageType.COMBAT, Skill.ATTACK), DEFENCE(StageType.COMBAT, Skill.DEFENCE), BUY_ITEMS(StageType.OTHER, Quest.A_SOULS_BANE.toString());
 	
 	StageType _type;
 	Skill _skill;
+	String _questName;
 	
-	Stage(StageType type){
+	Stage(StageType type, String questName){
 		_type = type;
+		_questName = questName;
 	}
 	
 	Stage(StageType type, Skill skill){
@@ -24,11 +26,17 @@ public enum Stage {
 	}
 	
 	
+	
+	
 	public StageType getType(){
 		return _type;
 	}
 	
 	public Skill getSkill(){
 		return _skill;
+	}
+	
+	public String getQuestName(){
+		return _questName;
 	}
 }

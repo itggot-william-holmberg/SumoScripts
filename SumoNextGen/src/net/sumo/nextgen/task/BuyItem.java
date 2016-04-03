@@ -2,8 +2,11 @@ package net.sumo.nextgen.task;
 
 import java.util.List;
 
+import org.osbot.rs07.api.Bank;
+
 import net.sumo.nextgen.resources.Areas;
 import net.sumo.nextgen.resources.Resources;
+import net.sumo.nextgen.stage.Stage;
 
 public class BuyItem extends Task {
 	int totalPrice;
@@ -11,7 +14,7 @@ public class BuyItem extends Task {
 
 	@Override
 	public boolean active() {
-		if (!Resources.BUY_LIST.isEmpty()) {
+		if (getStage() == Stage.BUY_ITEMS) {
 			return true;
 		}
 		return false;
@@ -24,6 +27,7 @@ public class BuyItem extends Task {
 			if (!Resources.soldItems) {
 				if (!Resources.withdrawItems) {
 					withdrawSellables();
+					s.bank.withdrawAll(995);
 				} else {
 					sellSellables();
 				}

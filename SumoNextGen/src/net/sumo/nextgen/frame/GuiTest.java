@@ -16,14 +16,19 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.osbot.rs07.api.ui.Skill;
+
 import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.stage.Stage;
 import net.sumo.nextgen.stage.StageType;
 import net.sumo.nextgen.stage.TaskTest;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
@@ -35,10 +40,10 @@ public class GuiTest {
 	private JScrollPane sourceScroll;
 	private JList<Stage> sourceList;
 	private JScrollPane destScroll;
-	private JList<Stage> destList;
+	private JList<TaskTest> destList;
 	private JButton addButton;
 	private JButton btnRemoveTask;
-	DefaultListModel<Stage> destmodel;
+	DefaultListModel<TaskTest> destmodel;
 	DefaultListModel<Stage> sourcemodel;
 	JButton btnStart;
 
@@ -80,12 +85,12 @@ public class GuiTest {
 
 		sourceList = new JList<Stage>(sourcemodel);
 		sourceScroll.setViewportView(sourceList);
-		destmodel = new DefaultListModel<Stage>();
+		destmodel = new DefaultListModel<TaskTest>();
 		destScroll = new JScrollPane();
 		destScroll.setBounds(303, 51, 117, 247);
 		frame.getContentPane().add(destScroll);
 
-		destList = new JList<Stage>(destmodel);
+		destList = new JList<TaskTest>(destmodel);
 		destScroll.setViewportView(destList);
 
 		Arrays.asList(Stage.values()).forEach(stage -> {
@@ -103,13 +108,13 @@ public class GuiTest {
 				}
 				for (int i = 0; i < destList.getModel().getSize();) {
 
-					Stage grabben = destList.getModel().getElementAt(i);
-					if (grabben.getType() == StageType.QUEST) {
+					TaskTest grabben = destList.getModel().getElementAt(i);
+					if (grabben.getStage().getType() == StageType.QUEST) {
 						if (!Resources.STAGE_LIST.contains(grabben)) {
-							Resources.TASKTEST_LIST.add(new TaskTest(grabben));
+							Resources.taskTest.add(grabben);
 						}
-					}else if(grabben.getType() == StageType.SKILL && Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()) > 0){
-							Resources.TASKTEST_LIST.add(new TaskTest(grabben, Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()), grabben.getSkill()));					
+					}else if(grabben.getStage().getType() == StageType.SKILL && Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()) > 0){
+							Resources.taskTest.add(grabben);					
 					}
 					i++;
 				}
@@ -125,12 +130,11 @@ public class GuiTest {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				destmodel.addElement(sourceList.getSelectedValue());
+				destmodel.addElement(new TaskTest(sourceList.getSelectedValue(),Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()), sourceList.getSelectedValue().getSkill()));
+				
 				if (sourceList.getModel().getElementAt(sourceList.getSelectedIndex()).getType() == StageType.QUEST) {
 					sourcemodel.remove(sourceList.getSelectedIndex());
 				}
-
 			}
 
 		});
@@ -142,8 +146,8 @@ public class GuiTest {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (destList.getModel().getSize() > 0 && !destList.isSelectionEmpty()) {
-					if (destList.getModel().getElementAt(destList.getSelectedIndex()).getType() == StageType.QUEST) {
-						sourcemodel.addElement(destList.getSelectedValue());
+					if (destList.getModel().getElementAt(destList.getSelectedIndex()).getStage().getType() == StageType.QUEST) {
+						sourcemodel.addElement(destList.getSelectedValue().getStage());
 					}
 					destmodel.remove(destList.getSelectedIndex());
 				}
@@ -153,4 +157,21 @@ public class GuiTest {
 		frame.getContentPane().add(btnRemoveTask);
 
 	}
+	
+	public class IngredientListCellRenderer extends DefaultListCellRenderer {
+	    public Component getListCellRendererComponent(JList<?> list,
+	                                 Object value,
+	                                 int index,
+	                                 boolean isSelected,
+	                                 boolean cellHasFocus) {
+	        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+	        if (value instanceof TaskTest) {
+	            TaskTest ingredient = (TaskTest)value;
+	            setText("Stage: " + ingredient.getLevelGoal() + ingredient.getStage());
+	        }
+	        return this;
+	    }
+	}
 }
+
+

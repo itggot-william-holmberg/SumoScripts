@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.osbot.rs07.api.ui.Skill;
+import org.osbot.rs07.api.util.ExperienceTracker;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 
@@ -14,6 +16,7 @@ import net.sumo.nextgen.frame.GuiTest;
 import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.stage.Stage;
 import net.sumo.nextgen.stage.StageType;
+import net.sumo.nextgen.stage.TaskTest;
 import net.sumo.nextgen.task.BuyItem;
 import net.sumo.nextgen.task.Task;
 import net.sumo.nextgen.task.fighting.BankFight;
@@ -63,35 +66,51 @@ public class Nextgen extends Script {
 	private long timeSpentOnTask;
 	private Stage lastStage;
 	private long taskBegan;
-	
+	ExperienceTracker xp;
 
 	@Override
 	public void onStart() {
+		
+		tasks.add(new Devmode().init(this));
+		addTeskTasks();
+		xp = this.getExperienceTracker();
 		timeBegan = System.currentTimeMillis();
 		taskBegan = System.currentTimeMillis();
-		
+		xp.startAll();
 		addGui();
-	
-		tasks.add(new Devmode().init(this));
-		
-	
+
 	}
 	
+	private void addTeskTasks(){
 	
+		Resources.taskTest.add(new TaskTest(Stage.COOKS_ASSISTANT));
+		Resources.taskTest.add(new TaskTest(Stage.SHEEP_SHEARER));
+		Resources.taskTest.add(new TaskTest(Stage.THE_RESTLESS_GHOST));
+		Resources.taskTest.add(new TaskTest(Stage.RUNE_MYSTERIES));
+		Resources.taskTest.add(new TaskTest(Stage.ROMEO_JULIET));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 17, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 11, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 23, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 15, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.STRENGTH, 6, Skill.STRENGTH));
+		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 4, Skill.ATTACK));
+		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 7, Skill.DEFENCE));
+		Resources.taskTest.add(new TaskTest(Stage.STRENGTH, 14, Skill.STRENGTH));
+		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 10, Skill.ATTACK));
+		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 13, Skill.DEFENCE));
+		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 12, Skill.ATTACK));
+	//	Resources.taskTest.add(new TaskTest(Stage.MINING, 19, Skill.MINING));
+	}
 
 	private void addGui() {
-	    GuiTest dual = new GuiTest();	
-	    
+		GuiTest dual = new GuiTest();
+
 	}
-	
-	
-
-
 
 	@Override
 	public int onLoop() throws InterruptedException {
 		boolean isActive = false;
-		
+
 		updateTask();
 
 		for (Task t : this.tasks) {
@@ -121,20 +140,26 @@ public class Nextgen extends Script {
 		g.drawString("Current task: " + Resources.currentStage, 65, 150);
 		g.drawString("Current state: " + Resources.CURRENT_STATE, 65, 165);
 		long sleepTime = TimeUnit.MILLISECONDS.toSeconds(Resources.sleepGoal - System.currentTimeMillis());
-		
+		if (Resources.currentStage.getSkill() != null) {
+			g.drawString("XP gained: " + xp.getGainedXP(Resources.currentStage.getSkill()) + " ("
+					+ xp.getGainedXPPerHour(Resources.currentStage.getSkill()) + ")", 65, 180);
+			g.drawString("Goal: " + Resources.currentSkillGoal + " (" + getSkills().getDynamic(Resources.currentSkill) + ")", 65, 195);
+		}
+
 		if (sleepTime > 0) {
 			g.setColor(Color.red);
-			g.drawString("Sleeping for another: " + sleepTime + " seconds.", 65, 180);
+			g.drawString("Sleeping for another: " + sleepTime + " seconds.", 65, 230);
 		}
 	}
-	
-	public void updateTask(){
-		if(lastStage == null){
+
+	public void updateTask() {
+		if (lastStage == null) {
 			addTask();
 			taskBegan = System.currentTimeMillis();
 			lastStage = Resources.currentStage;
-		}else if(lastStage != Resources.currentStage){
-			tasks.forEach(task->{
+			xp.startAll();
+		} else if (lastStage != Resources.currentStage) {
+			tasks.forEach(task -> {
 				log("lets remove");
 				task.remove();
 			});
@@ -144,85 +169,80 @@ public class Nextgen extends Script {
 		}
 
 	}
-	
-	public void addTask(){
-	if(Resources.currentStage == null){
-		log("null");
-	}else{
-		log("not null");
-		tasks.add(new BuyItem().init(this));
-		if(Resources.currentStage == Stage.COOKS_ASSISTANT){
-			//lumb
-			log("cook ass added");
-			tasks.add(new MakeFlour().init(this));
-			tasks.add(new GetEgg().init(this));
-			tasks.add(new GetMilk().init(this));
-			tasks.add(new FinishQuest().init(this));
-			tasks.add(new StartQuestCook().init(this));
-		}	
-		else if(Resources.currentStage == Stage.SHEEP_SHEARER){
-			//sheep
-			log("sheep added");
-			tasks.add(new GatherWool().init(this));
-			tasks.add(new SpinWool().init(this));
-			tasks.add(new StartQuestSheep().init(this));
+
+	public void addTask() {
+		if (Resources.currentStage == null) {
+			log("null");
+		} else {
+			log("not null");
+			tasks.add(new BuyItem().init(this));
+			if (Resources.currentStage == Stage.COOKS_ASSISTANT) {
+				// lumb
+				log("cook ass added");
+				tasks.add(new MakeFlour().init(this));
+				tasks.add(new GetEgg().init(this));
+				tasks.add(new GetMilk().init(this));
+				tasks.add(new FinishQuest().init(this));
+				tasks.add(new StartQuestCook().init(this));
+			} else if (Resources.currentStage == Stage.SHEEP_SHEARER) {
+				// sheep
+				log("sheep added");
+				tasks.add(new GatherWool().init(this));
+				tasks.add(new SpinWool().init(this));
+				tasks.add(new StartQuestSheep().init(this));
+			} else if (Resources.currentStage == Stage.THE_RESTLESS_GHOST) {
+				// ghost
+				log("ghost added");
+				tasks.add(new StartQuestGhost().init(this));
+				tasks.add(new GetAmulet().init(this));
+				tasks.add(new TalkToGhost().init(this));
+				tasks.add(new GetSkull().init(this));
+				tasks.add(new ReturnSkull().init(this));
+			} else if (Resources.currentStage == Stage.RUNE_MYSTERIES) {
+				// rune mysteries
+				log("mysteries added");
+				tasks.add(new StartQuestRuneMyst().init(this));
+				tasks.add(new ReturnTalisman().init(this));
+				tasks.add(new ReturnPackage().init(this));
+				tasks.add(new GetNotes().init(this));
+				tasks.add(new ReturnNotes().init(this));
+			} else if (Resources.currentStage == Stage.ROMEO_JULIET) {
+				// romeo and juliet
+				log("romeo and juliet added");
+				tasks.add(new StartQuestRomeo().init(this));
+				tasks.add(new SpeakToJuliet().init(this));
+				tasks.add(new GiveMessageToRomeo().init(this));
+				tasks.add(new SpeakToFather().init(this));
+				tasks.add(new SpeakToApothecary().init(this));
+				tasks.add(new SpeakToJulietScene().init(this));
+			} else if (Resources.currentStage == Stage.WOODCUTTING) {
+				// woodcutting
+				log("woodcutting added");
+				tasks.add(new BankWC().init(this));
+				tasks.add(new CutTree().init(this));
+				tasks.add(new WalkToBankFromWC().init(this));
+				tasks.add(new WalkToWCPlace().init(this));
+			} else if (Resources.currentStage == Stage.MINING) {
+				// mining
+				log("Mining added");
+				tasks.add(new DepositMining().init(this));
+				tasks.add(new MineOre().init(this));
+				tasks.add(new WalkToBankFromMining().init(this));
+				tasks.add(new WalkToMiningPlace().init(this));
+				tasks.add(new WithdrawPickaxe().init(this));
+				tasks.add(new WalkToDeposit().init(this));
+			} else if (Resources.currentStage.getType() == StageType.COMBAT) {
+				// mining
+				log("Combat added");
+				tasks.add(new BankFight().init(this));
+				tasks.add(new Fight().init(this));
+				tasks.add(new WalkToBankFromFight().init(this));
+				tasks.add(new WalkToFight().init(this));
+			}
 		}
-		else if(Resources.currentStage == Stage.THE_RESTLESS_GHOST){	
-			//ghost
-			log("ghost added");
-			tasks.add(new StartQuestGhost().init(this));
-			tasks.add(new GetAmulet().init(this));
-			tasks.add(new TalkToGhost().init(this));
-			tasks.add(new GetSkull().init(this));
-			tasks.add(new ReturnSkull().init(this));
-		}
-		else if(Resources.currentStage == Stage.RUNE_MYSTERIES){
-			//rune mysteries
-			log("mysteries added");
-			tasks.add(new StartQuestRuneMyst().init(this));
-			tasks.add(new ReturnTalisman().init(this));
-			tasks.add(new ReturnPackage().init(this));
-			tasks.add(new GetNotes().init(this));
-			tasks.add(new ReturnNotes().init(this));
-		}
-		else if(Resources.currentStage == Stage.ROMEO_JULIET){
-			//romeo and juliet
-			log("romeo and juliet added");
-			tasks.add(new StartQuestRomeo().init(this));
-			tasks.add(new SpeakToJuliet().init(this));
-			tasks.add(new GiveMessageToRomeo().init(this));
-			tasks.add(new SpeakToFather().init(this));
-			tasks.add(new SpeakToApothecary().init(this));
-			tasks.add(new SpeakToJulietScene().init(this));
-		}else if(Resources.currentStage == Stage.WOODCUTTING){
-			//woodcutting
-			log("woodcutting added");
-			tasks.add(new BankWC().init(this));
-			tasks.add(new CutTree().init(this));
-			tasks.add(new WalkToBankFromWC().init(this));
-			tasks.add(new WalkToWCPlace().init(this));
-		}else if(Resources.currentStage == Stage.MINING){
-			//mining
-			log("Mining added");
-			tasks.add(new DepositMining().init(this));
-			tasks.add(new MineOre().init(this));
-			tasks.add(new WalkToBankFromMining().init(this));
-			tasks.add(new WalkToMiningPlace().init(this));
-			tasks.add(new WithdrawPickaxe().init(this));
-			tasks.add(new WalkToDeposit().init(this));
-		}else if(Resources.currentStage.getType() == StageType.COMBAT){
-			//mining
-			log("Combat added");
-			tasks.add(new BankFight().init(this));
-			tasks.add(new Fight().init(this));
-			tasks.add(new WalkToBankFromFight().init(this));
-			tasks.add(new WalkToFight().init(this));
-		}
+		// tasks.add(new Devmode().init(this));
 	}
-		//tasks.add(new Devmode().init(this));
-	}
-	
-	
+
 	private String ft(long duration) {
 
 		String res = "";

@@ -30,10 +30,12 @@ import org.osbot.rs07.script.Script;
 import net.sumo.grandexchange.GrandExchangeAPI;
 import net.sumo.grandexchange.GrandExchangePriceAPI;
 import net.sumo.nextgen.Nextgen;
+import net.sumo.nextgen.enums.AttackStyle;
 import net.sumo.nextgen.enums.FightingAssignment;
 import net.sumo.nextgen.enums.FishingAssignment;
 import net.sumo.nextgen.enums.MiningAssigment;
 import net.sumo.nextgen.enums.WCAssignment;
+import net.sumo.nextgen.enums.WebBank;
 import net.sumo.nextgen.gear.GearSetups;
 import net.sumo.nextgen.queststage.CooksAssistantStage;
 import net.sumo.nextgen.queststage.RestlessGhostStage;
@@ -45,7 +47,6 @@ import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.stage.Stage;
 import net.sumo.nextgen.stage.StageType;
 import net.sumo.nextgen.stage.TaskTest;
-import net.sumo.nextgen.task.enums.AttackStyle;
 import net.sumo.nextgen.task.quest.cooksass.FinishQuest;
 import net.sumo.nextgen.task.quest.cooksass.GetEgg;
 import net.sumo.nextgen.task.quest.cooksass.GetMilk;
@@ -106,72 +107,55 @@ public abstract class Task {
 	}
 
 	public Stage getStage() {
-		/*
-		 * for (int i = 0; i < Resources.STAGE_LIST.size();) {
-		 * 
-		 * Stage stage = Resources.STAGE_LIST.get(i); if (stage.getType() ==
-		 * StageType.QUEST) { if(Quest.valueOf(stage.toString()) != null){ if
-		 * (shouldDoQuest(Quest.valueOf(stage.toString()))) { return stage; } }
-		 * } i++; } return null;
-		 */
-		/*
-		 * for (int i = 0; i < Resources.TASKTEST_LIST.size();) { Stage stage =
-		 * Resources.TASKTEST_LIST.get(i).getStage(); TaskTest t =
-		 * Resources.TASKTEST_LIST.get(i); if (stage.getType() ==
-		 * StageType.QUEST) { s.log(stage); if (Quest.valueOf(stage.toString())
-		 * != null) { s.log("yo0"); if
-		 * (shouldDoQuest(Quest.valueOf(stage.toString()))) { s.log("yo");
-		 * Resources.currentStage = stage; return stage; } } }else{
-		 * if(getLevel(t.getSkill()) < t.getLevelGoal()){ s.log("new task: " +
-		 * t.getLevelGoal() + stage); Resources.currentStage = stage;
-		 * Resources.currentSkillGoal = t.getLevelGoal(); return stage; } } i++;
-		 * } return null; for (int i = 0; i <
-		 * Arrays.asList(Stage.values()).size();) { Stage stage =
-		 * Arrays.asList(Stage.values()).get(i); if (stage.getType() ==
-		 * StageType.QUEST) { s.log(stage); if (Quest.valueOf(stage.toString())
-		 * != null) { s.log("yo0"); if
-		 * (shouldDoQuest(Quest.valueOf(stage.toString()))) { s.log("yo");
-		 * Resources.currentStage = stage; return stage; } } }else{
-		 * Resources.currentStage = stage; return stage; } i++; } return null;
-		 */
-
-		if (shouldDoQuest(Quest.COOKS_ASSISTANT)) {
-			Resources.currentStage = Stage.COOKS_ASSISTANT;
-			return Stage.COOKS_ASSISTANT;
-		} else if (shouldDoQuest(Quest.SHEEP_SHEARER)) {
-			Resources.currentStage = Stage.SHEEP_SHEARER;
-			return Stage.SHEEP_SHEARER;
-		} else if (shouldDoQuest(Quest.THE_RESTLESS_GHOST)) {
-			Resources.currentStage = Stage.THE_RESTLESS_GHOST;
-			return Stage.THE_RESTLESS_GHOST;
-		} else if (shouldDoQuest(Quest.RUNE_MYSTERIES)) {
-			Resources.currentStage = Stage.RUNE_MYSTERIES;
-			return Stage.RUNE_MYSTERIES;
-		} else if (shouldDoQuest(Quest.ROMEO_JULIET)) {
-			Resources.currentStage = Stage.ROMEO_JULIET;
-			return Stage.ROMEO_JULIET;
-		} else if (getWCLevel() < 17) {
-			Resources.currentStage = Stage.WOODCUTTING;
-			return Stage.WOODCUTTING;
-		} else if (getMiningLevel() < 11) {
-			Resources.currentStage = Stage.MINING;
-			return Stage.MINING;
-		} else if (getWCLevel() < 23) {
-			Resources.currentStage = Stage.WOODCUTTING;
-			return Stage.WOODCUTTING;
-		} else if (getMiningLevel() < 15) {
-			Resources.currentStage = Stage.MINING;
-			return Stage.MINING;
-		} else if (getStrLevel() < 6) {
-			Resources.currentStage = Stage.STRENGTH;
-			Resources.attackStyle = AttackStyle.STRENGTH;
-			return Stage.STRENGTH;
-		} else if (getAttLevel() < 4) {
-			Resources.currentStage = Stage.ATTACK;
-			Resources.attackStyle = AttackStyle.ATTACK;
-			return Stage.ATTACK;
+		
+		if(Resources.BUY_LIST.isEmpty()){
+		if (Resources.currentStage != null) {
+			if (Resources.currentStage.getType() == StageType.QUEST) {
+				if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {
+					s.log("returned earlier.");
+					return Resources.currentStage;
+				}
+			} else if (Resources.currentStage.getType() == StageType.COMBAT
+					|| Resources.currentStage.getType() == StageType.SKILL) {
+				if (getLevel(Resources.currentSkill) < Resources.currentSkillGoal) {
+					s.log("returned earlier");
+					return Resources.currentStage;
+				}
+			}
 		}
+
+		for (TaskTest task : Resources.taskTest) {
+
+			if (task.getStage().getType() == StageType.QUEST) {
+				if (Quest.valueOf(task.getStage().getQuestName()) != null
+						&& !isQuestCompleted(Quest.valueOf(task.getStage().getQuestName()))) {
+					s.log("we should do the quest: " + task.getStage().getQuestName());
+					Resources.currentStage = task.getStage();
+					return task.getStage();
+				}
+			} else if (task.getStage().getType() == StageType.SKILL
+					&& getLevel(task.getSkill()) < task.getLevelGoal()) {
+				s.log("We should train the skill: " + task.getSkill());
+				Resources.currentSkill = task.getSkill();
+				Resources.currentSkillGoal = task.getLevelGoal();
+				Resources.currentStage = task.getStage();
+				return task.getStage();
+			} else if (task.getStage().getType() == StageType.COMBAT
+					&& getLevel(task.getSkill()) < task.getLevelGoal()) {
+				Resources.attackStyle = task.getSkill();
+				Resources.currentSkill = task.getSkill();
+				Resources.currentSkillGoal = task.getLevelGoal();
+				Resources.currentStage = task.getStage();
+				return task.getStage();
+			}
+		}
+		}else{
+			return Stage.BUY_ITEMS;
+		}
+
+		s.log("lets return mining");
 		return Stage.MINING;
+
 	}
 
 	public boolean shouldWoodcut() {
@@ -779,8 +763,10 @@ public abstract class Task {
 	}
 
 	public String currentAxe() {
-		if (getWoodCuttingLevel() < 31) {
+		if (getWoodCuttingLevel() < 21) {
 			return "Bronze axe";
+		} else if (getWoodCuttingLevel() < 31) {
+			return "Mithril axe";
 		} else if (getWoodCuttingLevel() < 41) {
 			return "Adamant axe";
 		} else {
@@ -890,6 +876,10 @@ public abstract class Task {
 		 * && npc.isAttackable() && !npc.isUnderAttack() && npc.getHealth() > 0)
 		 * .collect(Collectors.toList());
 		 */
+	}
+	
+	public Area getClosestBank(){
+		return WebBank.getNearest(s).getArea();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1170,38 +1160,16 @@ public abstract class Task {
 
 		if (s.widgets.isVisible(593)) {
 
-			if (Resources.attackStyle == AttackStyle.STRENGTH && (attackStyle() != 1)) {
+			if (Resources.attackStyle == Skill.STRENGTH && (attackStyle() != 1)) {
 				s.log("lets click train str1");
 				s.mouse.click(689, 270, false);// click "train strength"
-			} else if (Resources.attackStyle == AttackStyle.ATTACK && (attackStyle() != 0)) {
+			} else if (Resources.attackStyle == Skill.ATTACK && (attackStyle() != 0)) {
 				s.log("lets click train att1");
 				s.mouse.click(601, 269, false); // click "train attack"
-			} else if (Resources.attackStyle == AttackStyle.DEFENCE && (attackStyle() != 0)) {
+			} else if (Resources.attackStyle == Skill.DEFENCE && (attackStyle() != 2)) {
 				s.log("lets click train def1");
 				s.mouse.click(701, 335, false); // click "train def"
 			}
-			/*
-			 * if (getStrLevel() < Resources.strGoal1 && (attackStyle() != 1)) {
-			 * s.log("lets click train str1"); s.mouse.click(689, 270, false);//
-			 * click "train strength" } else if (getAttLevel() <
-			 * Resources.attGoal1 && (attackStyle() != 0) && getStrLevel() ==
-			 * Resources.strGoal1) { s.log("lets click train att1");
-			 * s.mouse.click(601, 269, false); // click "train attack" } else if
-			 * (getDefLevel() < Resources.defGoal1 && (attackStyle() != 3) &&
-			 * getAttLevel() == Resources.attGoal1) { s.log(
-			 * "lets click train def1"); s.mouse.click(701, 335, false); //
-			 * click "train def" } else if (getStrLevel() < Resources.strGoal2
-			 * && getAttLevel() >= Resources.attGoal1 && (attackStyle() != 1)) {
-			 * s.log("lets click train str2"); s.mouse.click(689, 270, false);//
-			 * click "train strength" } else if (getAttLevel() <
-			 * Resources.attGoal2 && (attackStyle() != 0) && getStrLevel() ==
-			 * Resources.strGoal2) { s.log("lets click train att2");
-			 * s.mouse.click(601, 269, false); // click "train attack" } else if
-			 * (getDefLevel() < Resources.defGoal2 && getDefLevel() >=
-			 * Resources.defGoal1 && (attackStyle() != 3) && getAttLevel() ==
-			 * Resources.attGoal2) { s.log("lets click train def2");
-			 * s.mouse.click(701, 335, false); // click "train def" }
-			 */
 
 		} else {
 
@@ -1369,50 +1337,62 @@ public abstract class Task {
 		}
 
 	}
-	
-	public void buyItems(){
-		if (!s.getGrandExchange().isOpen()) { //Checks if ge is open
-			ge.openGE(); //open ge randomly using booth or npc
+
+	public void buyItems() {
+		if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
+			ge.openGE(); // open ge randomly using booth or npc
 		} else {
 			Resources.BUY_LIST.forEach(item -> {
 				int coins = (int) s.inventory.getAmount(995);
-				while(!s.inventory.contains(item)){
+				while (!s.inventory.contains(item)) {
 					ge.collectItems(false);
 					ge.createBuyOffer(item, coins, 1);
 				}
-				if(s.inventory.contains(item)){
+				if (s.inventory.contains(item)) {
 					Resources.BUY_LIST.remove(item);
 				}
 			});
 		}
 	}
 
-	public void sellSellables(){
-		if (!s.getGrandExchange().isOpen()) { //Checks if ge is open
-			ge.openGE(); //open ge randomly using booth or npc
+	public void sellSellables() {
+		if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
+			ge.openGE(); // open ge randomly using booth or npc
 		} else {
-			if(s.inventory.contains(Resources.SELLABLE_ITEMS)){
-				for(int i = 0; i<Resources.SELLABLE_ITEMS.length;){
-				s.log(i);
-				int id = Resources.SELLABLE_ITEMS[i];
-				s.log(id);
-				while(s.inventory.contains(id)){
-					s.log("inventory contains "+ id);
-					Item item = s.inventory.getItem(id);
-					String itemName = item.getName();
-					int amount = item.getAmount();
-					ge.collectItems(false); //collect items (boolean true -> to bank, false -> inventory)
-					ge.createSellOffer(itemName, 10, amount); //Sells all of the specified items in inventory at specified price ( 0 = all, int = specified amount)
-					sleep(1000);
+			if (s.inventory.contains(Resources.SELLABLE_ITEMS)) {
+				for (int i = 0; i < Resources.SELLABLE_ITEMS.length;) {
+					s.log(i);
+					int id = Resources.SELLABLE_ITEMS[i];
+					s.log(id);
+					while (s.inventory.contains(id)) {
+						s.log("inventory contains " + id);
+						Item item = s.inventory.getItem(id);
+						String itemName = item.getName();
+						int amount = item.getAmount();
+						ge.collectItems(false); // collect items (boolean true
+												// -> to bank, false ->
+												// inventory)
+						ge.createSellOffer(itemName, 10, amount); // Sells all
+																	// of the
+																	// specified
+																	// items in
+																	// inventory
+																	// at
+																	// specified
+																	// price ( 0
+																	// = all,
+																	// int =
+																	// specified
+																	// amount)
+						sleep(1000);
+					}
+					i++;
 				}
-				i++;
-				}
-			}else{
+			} else {
 				ge.collectItems(false);
 				Resources.soldItems = true;
 			}
-			
-			
+
 		}
 	}
 
@@ -1561,7 +1541,7 @@ public abstract class Task {
 			if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {
 				test++;
 			} else {
-				if(s.inventory.contains(gear.getFullGear().get(i).toString())){
+				if (s.inventory.contains(gear.getFullGear().get(i).toString())) {
 					Item item = s.inventory.getItem(gear.getFullGear().get(i).toString());
 					if (item.hasAction("Wield")) {
 						s.log("lets wield");
@@ -1574,11 +1554,11 @@ public abstract class Task {
 					if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {
 						test++;
 					}
-				}else{
-				if (!Resources.WITHDRAW_LIST.contains(gear.getFullGear().get(i))) {
-					s.log("we need" + gear.getFullGear().get(i));
-					Resources.WITHDRAW_LIST.add(gear.getFullGear().get(i));
-				}
+				} else {
+					if (!Resources.WITHDRAW_LIST.contains(gear.getFullGear().get(i))) {
+						s.log("we need" + gear.getFullGear().get(i));
+						Resources.WITHDRAW_LIST.add(gear.getFullGear().get(i));
+					}
 				}
 			}
 		}
@@ -1603,6 +1583,23 @@ public abstract class Task {
 					}
 				}
 			});
+		} else {
+			openBank();
+		}
+	}
+	
+	public void withdrawNeededItems(String item) {
+		if (bankIsOpen()) {
+				if (s.bank.contains(item)) {
+					s.log("bank contains item!");
+					s.bank.withdraw(item, 1);
+					sleep(1350, 1530);
+				} else {
+					if (!Resources.BUY_LIST.contains(item)) {
+						s.log("adding " + item + " to buy list");
+						Resources.BUY_LIST.add(item);
+					}
+				}
 		} else {
 			openBank();
 		}

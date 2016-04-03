@@ -1,4 +1,4 @@
-package net.sumo.nextgen.task.enums;
+package net.sumo.nextgen.enums;
 
 public enum AttackStyle {
 

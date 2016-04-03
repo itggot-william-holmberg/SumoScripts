@@ -8,7 +8,7 @@ public class WithdrawPickaxe extends Task {
 
 	@Override
 	public boolean active() {
-		if (shouldMine() && playerInArea(Areas.BANK_AREA_DRAYNOR) && !playerHasPickaxe()) {
+		if (shouldMine() && playerInArea(getClosestBank()) && !playerHasPickaxe()) {
 			return true;
 		}
 		return false;
@@ -19,7 +19,7 @@ public class WithdrawPickaxe extends Task {
 		String axeName = currentPickaxe();
 		Resources.CURRENT_STATE = "Banking";
 		if (!inventoryContains(axeName)) {
-			withdraw(axeName);
+			withdrawNeededItems(axeName);
 		}
 	}
 
