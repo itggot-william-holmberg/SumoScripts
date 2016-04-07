@@ -10,6 +10,7 @@ import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Skill;
 
 import net.sumo.nextgen.enums.AttackStyle;
+import net.sumo.nextgen.enums.GenItem;
 import net.sumo.nextgen.enums.MiningAssigment;
 import net.sumo.nextgen.queststage.CooksAssistantStage;
 import net.sumo.nextgen.stage.Stage;
@@ -22,7 +23,7 @@ public class Resources {
 	public static List<TaskTest> TASKTEST_LIST = new ArrayList<TaskTest>();
 
 	public static List<String> WITHDRAW_LIST = new ArrayList<String>();
-	public static List<String> BUY_LIST = new ArrayList<String>();
+	public static List<GenItem> BUY_LIST = new ArrayList<GenItem>();
 	
 	public static List<Stage> STAGE_LIST = new ArrayList<Stage>();
 	public static List<Quest> QUEST_LIST = new ArrayList<Quest>();

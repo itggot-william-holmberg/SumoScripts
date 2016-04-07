@@ -1,7 +1,10 @@
 package net.sumo.grandexchange;
 
+import java.util.Arrays;
 import java.util.Random;
 
+import org.osbot.rs07.api.GrandExchange.Box;
+import org.osbot.rs07.api.GrandExchange.Status;
 import org.osbot.rs07.api.def.ItemDefinition;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.model.Item;
@@ -458,6 +461,16 @@ public class GrandExchangeAPI {
 			return widget;
 		}
 		return null;
+	}
+	
+	public boolean offerExists(){
+		for(Box box : Arrays.asList(Box.values())){
+			if(parent.grandExchange.getStatus(box) == Status.FINISHED_BUY || parent.grandExchange.getStatus(box) == Status.FINISHED_SALE){
+				parent.log(box + " is either sold or buying");
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

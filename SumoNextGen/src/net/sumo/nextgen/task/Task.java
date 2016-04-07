@@ -33,6 +33,7 @@ import net.sumo.nextgen.Nextgen;
 import net.sumo.nextgen.enums.AttackStyle;
 import net.sumo.nextgen.enums.FightingAssignment;
 import net.sumo.nextgen.enums.FishingAssignment;
+import net.sumo.nextgen.enums.GenItem;
 import net.sumo.nextgen.enums.MiningAssigment;
 import net.sumo.nextgen.enums.WCAssignment;
 import net.sumo.nextgen.enums.WebBank;
@@ -1349,18 +1350,31 @@ public abstract class Task {
 			} else if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
 				ge.openGE(); // open ge randomly using booth or npc
 			} else {
-				Resources.BUY_LIST.forEach(item -> {
-					int coins = (int) s.inventory.getAmount(995);
+				Resources.BUY_LIST.forEach(genItem -> {
+					String item = genItem.getItemName();
+					int firstPrice = 10000;
+					try {
+						firstPrice = gePrice.getOverallPrice(genItem.getItemID());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					int secondPrice = (int) (firstPrice + firstPrice * 0.4);
 					while (!s.inventory.contains(item)) {
 						ge.collectItems(false);
-						ge.createBuyOffer(item, coins, 1);
+						ge.createBuyOffer(item, secondPrice, 1);
 					}
 					if (s.inventory.contains(item)) {
-						Resources.BUY_LIST.remove(item);
+						Resources.BUY_LIST.remove(genItem);
 					}
 				});
 			}
-		} else {
+		} else if (ge.offerExists()){
+			s.log("offer already exists, we have to collect");
+			sleep(1000);
+		}
+		
+		else {
 			if (!Resources.WITHDRAW_LIST.contains("coins"))
 				Resources.WITHDRAW_LIST.add("coins");
 		}
@@ -1594,7 +1608,20 @@ public abstract class Task {
 				} else {
 					if (!Resources.BUY_LIST.contains(item)) {
 						s.log("adding " + item + " to buy list");
-						Resources.BUY_LIST.add(item);
+						boolean Null = true;
+						for(GenItem genItem : GenItem.values()){
+							if(genItem.getItemName().equals(item)){
+								s.log("item exists, we have all data needed. lets add to buy list");
+								Resources.BUY_LIST.add(genItem);
+								Null = false;
+								break;
+							}
+						}
+						if(Null){
+							s.log("something is wrong, we dont have the right data. lets stop.");
+							s.stop();
+							s.stop();
+						}						
 					}
 				}
 			});
@@ -1612,7 +1639,7 @@ public abstract class Task {
 			} else {
 				if (!Resources.BUY_LIST.contains(item)) {
 					s.log("adding " + item + " to buy list");
-					Resources.BUY_LIST.add(item);
+					Resources.BUY_LIST.add(GenItem.valueOf(item));
 				}
 			}
 		} else {
