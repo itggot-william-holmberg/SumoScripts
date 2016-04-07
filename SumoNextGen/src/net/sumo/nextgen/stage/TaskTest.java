@@ -28,5 +28,9 @@ public class TaskTest {
 	public Skill getSkill(){
 		return _skill;
 	}
+	@Override
+	public String toString(){
+		return _levelGoal + " " + _stage;
+	}
 
 }

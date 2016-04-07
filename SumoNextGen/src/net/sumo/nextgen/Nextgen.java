@@ -99,7 +99,16 @@ public class Nextgen extends Script {
 		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 10, Skill.ATTACK));
 		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 13, Skill.DEFENCE));
 		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 12, Skill.ATTACK));
-	//	Resources.taskTest.add(new TaskTest(Stage.MINING, 19, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 19, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 30, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 25, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.STRENGTH, 16, Skill.STRENGTH));
+		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 17, Skill.ATTACK));
+		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 16, Skill.DEFENCE));
+		Resources.taskTest.add(new TaskTest(Stage.STRENGTH, 19, Skill.STRENGTH));
+		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 20, Skill.ATTACK));
+		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 20, Skill.DEFENCE));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 28, Skill.MINING));
 	}
 
 	private void addGui() {

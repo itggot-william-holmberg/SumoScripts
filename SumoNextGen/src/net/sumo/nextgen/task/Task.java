@@ -107,49 +107,49 @@ public abstract class Task {
 	}
 
 	public Stage getStage() {
-		
-		if(Resources.BUY_LIST.isEmpty()){
-		if (Resources.currentStage != null) {
-			if (Resources.currentStage.getType() == StageType.QUEST) {
-				if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {
-					s.log("returned earlier.");
-					return Resources.currentStage;
-				}
-			} else if (Resources.currentStage.getType() == StageType.COMBAT
-					|| Resources.currentStage.getType() == StageType.SKILL) {
-				if (getLevel(Resources.currentSkill) < Resources.currentSkillGoal) {
-					s.log("returned earlier");
-					return Resources.currentStage;
+
+		if (Resources.BUY_LIST.isEmpty()) {
+			if (Resources.currentStage != null) {
+				if (Resources.currentStage.getType() == StageType.QUEST) {
+					if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {
+						s.log("returned earlier.");
+						return Resources.currentStage;
+					}
+				} else if (Resources.currentStage.getType() == StageType.COMBAT
+						|| Resources.currentStage.getType() == StageType.SKILL) {
+					if (getLevel(Resources.currentSkill) < Resources.currentSkillGoal) {
+						s.log("returned earlier");
+						return Resources.currentStage;
+					}
 				}
 			}
-		}
 
-		for (TaskTest task : Resources.taskTest) {
+			for (TaskTest task : Resources.taskTest) {
 
-			if (task.getStage().getType() == StageType.QUEST) {
-				if (Quest.valueOf(task.getStage().getQuestName()) != null
-						&& !isQuestCompleted(Quest.valueOf(task.getStage().getQuestName()))) {
-					s.log("we should do the quest: " + task.getStage().getQuestName());
+				if (task.getStage().getType() == StageType.QUEST) {
+					if (Quest.valueOf(task.getStage().getQuestName()) != null
+							&& !isQuestCompleted(Quest.valueOf(task.getStage().getQuestName()))) {
+						s.log("we should do the quest: " + task.getStage().getQuestName());
+						Resources.currentStage = task.getStage();
+						return task.getStage();
+					}
+				} else if (task.getStage().getType() == StageType.SKILL
+						&& getLevel(task.getSkill()) < task.getLevelGoal()) {
+					s.log("We should train the skill: " + task.getSkill());
+					Resources.currentSkill = task.getSkill();
+					Resources.currentSkillGoal = task.getLevelGoal();
+					Resources.currentStage = task.getStage();
+					return task.getStage();
+				} else if (task.getStage().getType() == StageType.COMBAT
+						&& getLevel(task.getSkill()) < task.getLevelGoal()) {
+					Resources.attackStyle = task.getSkill();
+					Resources.currentSkill = task.getSkill();
+					Resources.currentSkillGoal = task.getLevelGoal();
 					Resources.currentStage = task.getStage();
 					return task.getStage();
 				}
-			} else if (task.getStage().getType() == StageType.SKILL
-					&& getLevel(task.getSkill()) < task.getLevelGoal()) {
-				s.log("We should train the skill: " + task.getSkill());
-				Resources.currentSkill = task.getSkill();
-				Resources.currentSkillGoal = task.getLevelGoal();
-				Resources.currentStage = task.getStage();
-				return task.getStage();
-			} else if (task.getStage().getType() == StageType.COMBAT
-					&& getLevel(task.getSkill()) < task.getLevelGoal()) {
-				Resources.attackStyle = task.getSkill();
-				Resources.currentSkill = task.getSkill();
-				Resources.currentSkillGoal = task.getLevelGoal();
-				Resources.currentStage = task.getStage();
-				return task.getStage();
 			}
-		}
-		}else{
+		} else {
 			return Stage.BUY_ITEMS;
 		}
 
@@ -775,11 +775,11 @@ public abstract class Task {
 	}
 
 	public String currentPickaxe() {
-		if (getMiningLevel() < 31) {
+		if (getMiningLevel() < 21) {
 			return "Bronze pickaxe";
-		} /*
-			 * else if(getMiningLevel() < 31){ return "Mithril pickaxe"; }
-			 */else if (getMiningLevel() < 41) {
+		} else if (getMiningLevel() < 31) {
+			return "Mithril pickaxe";
+		} else if (getMiningLevel() < 41) {
 			return "Adamant pickaxe";
 		}
 		return "Rune pickaxe";
@@ -877,8 +877,8 @@ public abstract class Task {
 		 * .collect(Collectors.toList());
 		 */
 	}
-	
-	public Area getClosestBank(){
+
+	public Area getClosestBank() {
 		return WebBank.getNearest(s).getArea();
 	}
 
@@ -1120,8 +1120,12 @@ public abstract class Task {
 	}
 
 	public WCAssignment currentWCAssigment() {
-		if (getWoodCuttingLevel() < 25) {
+		if (getWoodCuttingLevel() < 21) {
 			return WCAssignment.NORMAL_TREE_LUMBRIDGE;
+		} else if (getWoodCuttingLevel() < 31) {
+			return WCAssignment.OAK_TREE_LUMBRIDGE;
+		} else if (getWoodCuttingLevel() < 60) {
+			return WCAssignment.OAK_TREE_LUMBRIDGE; // byt till willow
 		}
 		return WCAssignment.NORMAL_TREE_LUMBRIDGE;
 	}
@@ -1339,19 +1343,26 @@ public abstract class Task {
 	}
 
 	public void buyItems() {
-		if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
-			ge.openGE(); // open ge randomly using booth or npc
+		if (s.inventory.contains(995)) {
+			if (Resources.WITHDRAW_LIST.contains("coins")) {
+				Resources.WITHDRAW_LIST.remove("coins");
+			} else if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
+				ge.openGE(); // open ge randomly using booth or npc
+			} else {
+				Resources.BUY_LIST.forEach(item -> {
+					int coins = (int) s.inventory.getAmount(995);
+					while (!s.inventory.contains(item)) {
+						ge.collectItems(false);
+						ge.createBuyOffer(item, coins, 1);
+					}
+					if (s.inventory.contains(item)) {
+						Resources.BUY_LIST.remove(item);
+					}
+				});
+			}
 		} else {
-			Resources.BUY_LIST.forEach(item -> {
-				int coins = (int) s.inventory.getAmount(995);
-				while (!s.inventory.contains(item)) {
-					ge.collectItems(false);
-					ge.createBuyOffer(item, coins, 1);
-				}
-				if (s.inventory.contains(item)) {
-					Resources.BUY_LIST.remove(item);
-				}
-			});
+			if (!Resources.WITHDRAW_LIST.contains("coins"))
+				Resources.WITHDRAW_LIST.add("coins");
 		}
 	}
 
@@ -1409,7 +1420,11 @@ public abstract class Task {
 							s.bank.withdrawAll(Resources.SELLABLE_ITEMS[i]);
 							i++;
 							sleep(1000);
+						} else {
+							s.log("bank does not contains " + Resources.SELLABLE_ITEMS[i]);
+							i++;
 						}
+						sleep(1000);
 					}
 				}
 				sleep(1000);
@@ -1587,19 +1602,19 @@ public abstract class Task {
 			openBank();
 		}
 	}
-	
+
 	public void withdrawNeededItems(String item) {
 		if (bankIsOpen()) {
-				if (s.bank.contains(item)) {
-					s.log("bank contains item!");
-					s.bank.withdraw(item, 1);
-					sleep(1350, 1530);
-				} else {
-					if (!Resources.BUY_LIST.contains(item)) {
-						s.log("adding " + item + " to buy list");
-						Resources.BUY_LIST.add(item);
-					}
+			if (s.bank.contains(item)) {
+				s.log("bank contains item!");
+				s.bank.withdraw(item, 1);
+				sleep(1350, 1530);
+			} else {
+				if (!Resources.BUY_LIST.contains(item)) {
+					s.log("adding " + item + " to buy list");
+					Resources.BUY_LIST.add(item);
 				}
+			}
 		} else {
 			openBank();
 		}

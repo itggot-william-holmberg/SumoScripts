@@ -15,7 +15,8 @@ import net.sumo.nextgen.resources.Areas;
 
 public enum WCAssignment {
 	
-	NORMAL_TREE_LUMBRIDGE("Tree", "Logs", Areas.NORMAL_TREE_LUMBRIDGE, Banks.LUMBRIDGE_UPPER);
+	NORMAL_TREE_LUMBRIDGE("Tree", "Logs", Areas.NORMAL_TREE_LUMBRIDGE, Banks.LUMBRIDGE_UPPER), 
+	OAK_TREE_LUMBRIDGE("Oak", "Oak logs", Areas.OAK_TREE_LUMBRIDGE_AREA, Banks.LUMBRIDGE_UPPER);
 
 	private int _minLevel, _maxLevel;
 	private Area _area;

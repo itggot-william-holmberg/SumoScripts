@@ -131,7 +131,7 @@ public class Resources {
 	public static NPC lastFish;
 	public static Skill attackStyle;
 	
-	public static int SELLABLE_ITEMS[] = {1511,438,436,439,437};
+	public static int SELLABLE_ITEMS[] = {1511,1512,438,436,439,437};
 	public static boolean soldItems = false;
 	public static boolean withdrawItems = false;
 	public static List<TaskTest>taskTest = new ArrayList<TaskTest>();

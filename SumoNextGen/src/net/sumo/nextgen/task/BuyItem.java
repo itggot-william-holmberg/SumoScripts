@@ -27,6 +27,7 @@ public class BuyItem extends Task {
 			if (!Resources.soldItems) {
 				if (!Resources.withdrawItems) {
 					withdrawSellables();
+					if(s.bank.contains(995))
 					s.bank.withdrawAll(995);
 				} else {
 					sellSellables();
