@@ -12,6 +12,7 @@ import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 
 import net.sumo.nextgen.dev.Devmode;
+import net.sumo.nextgen.dev.Log;
 import net.sumo.nextgen.frame.GuiTest;
 import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.stage.Stage;
@@ -66,6 +67,7 @@ public class Nextgen extends Script {
 	private long timeSpentOnTask;
 	private Stage lastStage;
 	private long taskBegan;
+	Log log;
 	ExperienceTracker xp;
 
 	@Override
@@ -83,11 +85,7 @@ public class Nextgen extends Script {
 	
 	private void addTeskTasks(){
 	
-		Resources.taskTest.add(new TaskTest(Stage.COOKS_ASSISTANT));
-		Resources.taskTest.add(new TaskTest(Stage.SHEEP_SHEARER));
-		Resources.taskTest.add(new TaskTest(Stage.THE_RESTLESS_GHOST));
-		Resources.taskTest.add(new TaskTest(Stage.RUNE_MYSTERIES));
-		Resources.taskTest.add(new TaskTest(Stage.ROMEO_JULIET));
+	
 		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 17, Skill.WOODCUTTING));
 		Resources.taskTest.add(new TaskTest(Stage.MINING, 11, Skill.MINING));
 		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 23, Skill.WOODCUTTING));
@@ -109,6 +107,7 @@ public class Nextgen extends Script {
 		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 20, Skill.ATTACK));
 		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 20, Skill.DEFENCE));
 		Resources.taskTest.add(new TaskTest(Stage.MINING, 28, Skill.MINING));
+		log("added");
 	}
 
 	private void addGui() {

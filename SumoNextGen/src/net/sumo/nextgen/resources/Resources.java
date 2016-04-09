@@ -22,7 +22,7 @@ public class Resources {
 	public static final int QUEST = 0;
 	public static List<TaskTest> TASKTEST_LIST = new ArrayList<TaskTest>();
 
-	public static List<String> WITHDRAW_LIST = new ArrayList<String>();
+	public static List<GenItem> WITHDRAW_LIST = new ArrayList<GenItem>();
 	public static List<GenItem> BUY_LIST = new ArrayList<GenItem>();
 	
 	public static List<Stage> STAGE_LIST = new ArrayList<Stage>();

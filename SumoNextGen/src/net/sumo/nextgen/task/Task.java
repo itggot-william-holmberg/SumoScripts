@@ -1171,8 +1171,9 @@ public abstract class Task {
 			} else if (Resources.attackStyle == Skill.ATTACK && (attackStyle() != 0)) {
 				s.log("lets click train att1");
 				s.mouse.click(601, 269, false); // click "train attack"
-			} else if (Resources.attackStyle == Skill.DEFENCE && (attackStyle() != 2)) {
+			} else if (Resources.attackStyle == Skill.DEFENCE && (attackStyle() != 3)) {
 				s.log("lets click train def1");
+				s.log(attackStyle());
 				s.mouse.click(701, 335, false); // click "train def"
 			}
 
@@ -1352,14 +1353,15 @@ public abstract class Task {
 			} else {
 				Resources.BUY_LIST.forEach(genItem -> {
 					String item = genItem.getItemName();
-					int firstPrice = 10000;
+					int firstPrice = getAmount("coins") - 50;
 					try {
 						firstPrice = gePrice.getOverallPrice(genItem.getItemID());
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					int secondPrice = (int) (firstPrice + firstPrice * 0.4);
+
+					int secondPrice = (int) (firstPrice + firstPrice * 0.4 + 200);
 					while (!s.inventory.contains(item)) {
 						ge.collectItems(false);
 						ge.createBuyOffer(item, secondPrice, 1);
@@ -1369,14 +1371,28 @@ public abstract class Task {
 					}
 				});
 			}
-		} else if (ge.offerExists()){
+		} else if (ge.offerExists()) {
 			s.log("offer already exists, we have to collect");
 			sleep(1000);
 		}
-		
+
 		else {
-			if (!Resources.WITHDRAW_LIST.contains("coins"))
-				Resources.WITHDRAW_LIST.add("coins");
+			if (!Resources.WITHDRAW_LIST.contains("coins")) {
+				boolean Null = true;
+				for (GenItem genItem : GenItem.values()) {
+					if (genItem.getItemName().equals("coins")) {
+						s.log("item exists, we have all data needed. lets add to buy list");
+						Resources.BUY_LIST.add(genItem);
+						Null = false;
+						break;
+					}
+				}
+				if (Null) {
+					s.log("something is wrong, we dont have the right data. lets stop.");
+					s.stop();
+					s.stop();
+				}
+			}
 		}
 	}
 
@@ -1586,7 +1602,7 @@ public abstract class Task {
 				} else {
 					if (!Resources.WITHDRAW_LIST.contains(gear.getFullGear().get(i))) {
 						s.log("we need" + gear.getFullGear().get(i));
-						Resources.WITHDRAW_LIST.add(gear.getFullGear().get(i));
+						Resources.WITHDRAW_LIST.add(getGenItem(gear.getFullGear().get(i)));
 					}
 				}
 			}
@@ -1599,32 +1615,37 @@ public abstract class Task {
 
 	}
 
+	public GenItem getGenItem(String itemName) {
+		boolean Null = true;
+		for (GenItem genItem : GenItem.values()) {
+			if (genItem.getItemName().equals(itemName)) {
+				s.log("item exists, we have all data needed. lets add to buy list");
+				Resources.BUY_LIST.add(genItem);
+				Null = false;
+				return genItem;
+			}
+		}
+		if (Null) {
+			s.log("something is wrong, we dont have the right data. lets stop.");
+			s.stop();
+			s.stop();
+		}
+		return null;
+	}
+
 	public void withdrawNeededItems() {
 		if (bankIsOpen()) {
-			Resources.WITHDRAW_LIST.forEach(item -> {
-				if (s.bank.contains(item)) {
-					s.bank.withdraw(item, 1);
+			for (GenItem genItem : Resources.WITHDRAW_LIST) {
+				if (s.bank.contains(genItem.getItemName())) {
+					s.bank.withdraw(genItem.getItemID(), 1);
 					sleep(1350, 1530);
 				} else {
-					if (!Resources.BUY_LIST.contains(item)) {
-						s.log("adding " + item + " to buy list");
-						boolean Null = true;
-						for(GenItem genItem : GenItem.values()){
-							if(genItem.getItemName().equals(item)){
-								s.log("item exists, we have all data needed. lets add to buy list");
-								Resources.BUY_LIST.add(genItem);
-								Null = false;
-								break;
-							}
-						}
-						if(Null){
-							s.log("something is wrong, we dont have the right data. lets stop.");
-							s.stop();
-							s.stop();
-						}						
+					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
+						s.log("adding " + genItem.getItemName() + " to buy list");
+						Resources.BUY_LIST.add(genItem);
 					}
 				}
-			});
+			}
 		} else {
 			openBank();
 		}
@@ -1671,6 +1692,8 @@ public abstract class Task {
 					if (s.bank.isOpen()) {
 						s.bank.close();
 					}
+					s.log("lets close interface");
+					s.widgets.closeOpenInterface();
 					if (item.hasAction("Wield")) {
 						s.log("lets wield");
 						item.interact("wield");
