@@ -112,14 +112,12 @@ public abstract class Task {
 		if (Resources.BUY_LIST.isEmpty()) {
 			if (Resources.currentStage != null) {
 				if (Resources.currentStage.getType() == StageType.QUEST) {
-					if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {
-						s.log("returned earlier.");
+					if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {	
 						return Resources.currentStage;
 					}
 				} else if (Resources.currentStage.getType() == StageType.COMBAT
 						|| Resources.currentStage.getType() == StageType.SKILL) {
 					if (getLevel(Resources.currentSkill) < Resources.currentSkillGoal) {
-						s.log("returned earlier");
 						return Resources.currentStage;
 					}
 				}
@@ -1440,6 +1438,9 @@ public abstract class Task {
 	public void withdrawSellables() {
 		NPC banker = s.npcs.closest("Banker");
 		if (bankIsOpen()) {
+			if(s.inventory.getEmptySlots() < 15){
+				s.bank.depositAll();
+			}
 			while (s.bank.contains(Resources.SELLABLE_ITEMS)) {
 				if (s.bank.getWithdrawMode() != BankMode.WITHDRAW_NOTE) {
 					s.getBank().enableMode(BankMode.WITHDRAW_NOTE);
@@ -1626,7 +1627,7 @@ public abstract class Task {
 			}
 		}
 		if (Null) {
-			s.log("something is wrong, we dont have the right data. lets stop.");
+			s.log(itemName + " does not exist, we dont have the right data. lets stop.");
 			s.stop();
 			s.stop();
 		}
@@ -1653,15 +1654,19 @@ public abstract class Task {
 
 	public void withdrawNeededItems(String item) {
 		if (bankIsOpen()) {
-			if (s.bank.contains(item)) {
-				s.log("bank contains item!");
-				s.bank.withdraw(item, 1);
-				sleep(1350, 1530);
-			} else {
-				if (!Resources.BUY_LIST.contains(item)) {
-					s.log("adding " + item + " to buy list");
-					Resources.BUY_LIST.add(GenItem.valueOf(item));
+			GenItem genItem = getGenItem(item);
+			if(genItem != null){
+				if (s.bank.contains(genItem.getItemName())) {
+					s.bank.withdraw(genItem.getItemID(), 1);
+					sleep(1350, 1530);
+				} else {
+					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
+						s.log("adding " + genItem.getItemName() + " to buy list");
+						Resources.BUY_LIST.add(genItem);
+					}
 				}
+			}else{
+				s.log(item + " does not exist, we have to add it to our enums");
 			}
 		} else {
 			openBank();
