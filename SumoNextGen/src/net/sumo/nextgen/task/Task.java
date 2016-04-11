@@ -108,7 +108,7 @@ public abstract class Task {
 	}
 
 	public Stage getStage() {
-
+		s.log(getStrLevel());
 		if (Resources.BUY_LIST.isEmpty()) {
 			if (Resources.currentStage != null) {
 				if (Resources.currentStage.getType() == StageType.QUEST) {
@@ -124,7 +124,8 @@ public abstract class Task {
 			}
 
 			for (TaskTest task : Resources.taskTest) {
-
+				s.log(task.getSkill());
+				s.log(task.getLevelGoal());
 				if (task.getStage().getType() == StageType.QUEST) {
 					if (Quest.valueOf(task.getStage().getQuestName()) != null
 							&& !isQuestCompleted(Quest.valueOf(task.getStage().getQuestName()))) {
@@ -141,6 +142,7 @@ public abstract class Task {
 					return task.getStage();
 				} else if (task.getStage().getType() == StageType.COMBAT
 						&& getLevel(task.getSkill()) < task.getLevelGoal()) {
+					s.log("combat");
 					Resources.attackStyle = task.getSkill();
 					Resources.currentSkill = task.getSkill();
 					Resources.currentSkillGoal = task.getLevelGoal();
@@ -1123,10 +1125,12 @@ public abstract class Task {
 			return WCAssignment.NORMAL_TREE_LUMBRIDGE;
 		} else if (getWoodCuttingLevel() < 31) {
 			return WCAssignment.OAK_TREE_LUMBRIDGE;
-		} else if (getWoodCuttingLevel() < 60) {
-			return WCAssignment.OAK_TREE_LUMBRIDGE; // byt till willow
+		} else if (getWoodCuttingLevel() < 42) {
+			return WCAssignment.WILLOW_TREE_LUMBRIDGE; // byt till willow
+		} else if (getWoodCuttingLevel() < 42) {
+			return WCAssignment.WILLOW_TREE_DRAYNOR; // byt till willow
 		}
-		return WCAssignment.NORMAL_TREE_LUMBRIDGE;
+		return WCAssignment.WILLOW_TREE_LUMBRIDGE;
 	}
 
 	public MiningAssigment currentMiningAssigment() {
@@ -1147,7 +1151,7 @@ public abstract class Task {
 		} else if (getMiningLevel() < 27) {
 			return MiningAssigment.COPPER_ORE_RIMMINGTON;
 		} else if (getMiningLevel() < 29) {
-			return MiningAssigment.TIN_ORE_RIMMINGTON;
+			return MiningAssigment.IRON_ORE_RIMMINGTON;
 		} else if (getMiningLevel() < 31) {
 			return MiningAssigment.COPPER_ORE_RIMMINGTON;
 		} else if (getMiningLevel() < 50) {
@@ -1581,7 +1585,7 @@ public abstract class Task {
 	}
 
 	public boolean needToWithdrawGear(GearSetups gear) {
-
+		s.widgets.closeOpenInterface();
 		int test = 0;
 		for (int i = 0; i < gear.getFullGear().size(); i++) {
 			if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {

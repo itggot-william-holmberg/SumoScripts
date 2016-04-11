@@ -115,7 +115,9 @@ public class GuiTest {
 						}
 					}else if(grabben.getStage().getType() == StageType.SKILL && Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()) > 0){
 							Resources.taskTest.add(grabben);					
-					}
+					}else if(grabben.getStage().getType() == StageType.COMBAT && Integer.parseInt(comboBoxSkillGoal.getSelectedItem().toString()) > 0){
+						Resources.taskTest.add(grabben);					
+				}
 					i++;
 				}
 			}

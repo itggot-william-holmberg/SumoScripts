@@ -84,9 +84,9 @@ public class Nextgen extends Script {
 	}
 	
 	private void addTeskTasks(){
+
 	
-	
-		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 17, Skill.WOODCUTTING));
+		/*Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 17, Skill.WOODCUTTING));
 		Resources.taskTest.add(new TaskTest(Stage.MINING, 11, Skill.MINING));
 		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 23, Skill.WOODCUTTING));
 		Resources.taskTest.add(new TaskTest(Stage.MINING, 15, Skill.MINING));
@@ -107,6 +107,13 @@ public class Nextgen extends Script {
 		Resources.taskTest.add(new TaskTest(Stage.ATTACK, 20, Skill.ATTACK));
 		Resources.taskTest.add(new TaskTest(Stage.DEFENCE, 20, Skill.DEFENCE));
 		Resources.taskTest.add(new TaskTest(Stage.MINING, 28, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 36, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 32, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 39, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 37, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 41, Skill.WOODCUTTING));
+		Resources.taskTest.add(new TaskTest(Stage.MINING, 40, Skill.MINING));
+		Resources.taskTest.add(new TaskTest(Stage.WOODCUTTING, 47, Skill.WOODCUTTING));*/
 		log("added");
 	}
 
@@ -133,7 +140,7 @@ public class Nextgen extends Script {
 		if (!isActive) {
 			log("cant find any state");
 
-			sleep(1000);
+			sleep(5000);
 		}
 		return 500;
 	}

@@ -56,6 +56,13 @@ public class Areas {
 			new Position(3170, 3263, 0), new Position(3185, 3266, 0), new Position(3199, 3252, 0) });
 
 	public static Area WILLOW_TREE_LUMBRIDGE_AREA = new Area(3182, 3268, 3175, 3277);
+	
+	public static Area WILLOW_TREE_DRAYNOR_AREA = new Area(new Position[] {
+			new Position(3082, 3240, 0),
+			new Position(3095, 3239, 0),
+			new Position(3095, 3227, 0),
+			new Position(3085, 3226, 0)
+	});
 	public static Area TREE_AREA_LUMBRIDGE = new Area(
 			new Position[] { new Position(3201, 3196, 0), new Position(3200, 3234, 0), new Position(3213, 3241, 0),
 					new Position(3216, 3253, 0), new Position(3197, 3257, 0), new Position(3191, 3258, 0),
