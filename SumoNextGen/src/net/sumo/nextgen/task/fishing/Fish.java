@@ -4,27 +4,28 @@ import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 
-import net.sumo.sumoscript.enums.PlayerTask;
-import net.sumo.sumoscript.task.Task;
+import net.sumo.nextgen.resources.Resources;
+import net.sumo.nextgen.task.Task;
+
+
 
 public class Fish extends Task {
 	@Override
 	public boolean active() {
-		if (currentTask() == PlayerTask.FISH && playerInArea(currentFishingAssignment().getFishingArea())
-				&& shouldFish()) {
+		if (shouldFish() && playerInArea(currentFishingAssignment().getFishingArea()) && readyToFish()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void run() throws InterruptedException {
-		r.STATE = "lets fish";
+	public void execute()  {
+		Resources.CURRENT_STATE = "lets fish";
 		while ((playerIsBusy()) || playerIsMoving()) {
 			updateMessage("We are already fishing, lets sleep");
 			checkContinue();
-			antiBan();
-			sleep(100);
+			FishingAntiBan();
+			sleep(10000);
 		}
 		fish();
 
@@ -35,7 +36,7 @@ public class Fish extends Task {
 		NPC closestTarget = s.npcs.closest(currentFishingAssignment().getFishingSpots());
 		if (closestTarget != null && currentFishingAssignment().getFishingArea().contains(closestTarget)) {
 			closestTarget.interact(currentFishingAssignment().getAction());
-			r.lastFish = closestTarget;
+			Resources.lastFish = closestTarget;
 			s.log("Object exists, lets interact.");
 			while (playerIsMoving()) {
 				s.log("sleeping cuz moving");
@@ -47,15 +48,15 @@ public class Fish extends Task {
 			} else {
 				s.log("Some one got to the target faster than us. Lets find a new target");
 				closestTarget = s.npcs.closest(currentFishingAssignment().getFishingSpots());
-				if (closestTarget != null && shouldFish()) {
+				if (closestTarget != null && shouldFish() && !inventoryIsFull()) {
 					fish();
 				}
 			}
 		} else {
 
-			if (r.lastFish != null) {
-				int x = r.lastFish.getX();
-				int y = r.lastFish.getY();
+			if (Resources.lastFish != null) {
+				int x = Resources.lastFish.getX();
+				int y = Resources.lastFish.getY();
 				Position newPos = new Position(x - 2, y - 2, 0);
 				if (newPos.distance(s.myPosition()) > 3) {
 					updateMessage("fish is unavailable, lets walk to last tree!");

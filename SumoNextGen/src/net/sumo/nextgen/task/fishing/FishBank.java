@@ -1,25 +1,33 @@
 package net.sumo.nextgen.task.fishing;
 
-import net.sumo.sumoscript.enums.PlayerTask;
-import net.sumo.sumoscript.task.Task;
+import java.util.Arrays;
+
+import net.sumo.nextgen.enums.WebBank;
+import net.sumo.nextgen.resources.Resources;
+import net.sumo.nextgen.task.Task;
 
 public class FishBank extends Task{
 
 	@Override
 	public boolean active() {
-		if(currentTask() == PlayerTask.FISH && playerInArea(currentFishingAssignment().getBankArea()) && !shouldFish()){
+		if(playerInArea(WebBank.getNearest(s).getArea()) && shouldFish()  && !readyToFish()){
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void run() throws InterruptedException {
-		r.STATE = "Banking";
-		if(inventoryIsFull()){
+	public void execute() {
+	    Resources.CURRENT_STATE = "Banking";
+	    String[] fishGear = currentFishingAssignment().getFishGear();
+	    Arrays.asList(fishGear).forEach(item ->{
+	    	if (!inventoryContains(item)) {
+				withdrawNeededItems(item);
+			}
+	    });
+	    
+	    if (inventoryIsFull()) {
 			depositAllExcept(currentFishingAssignment().getFishGear());
-		}else if(!playerHasFishGear()){
-			withdraw(currentFishingAssignment().getFishGear());
 		}
 		
 	}

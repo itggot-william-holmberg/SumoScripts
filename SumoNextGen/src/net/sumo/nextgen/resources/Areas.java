@@ -5,6 +5,7 @@ import org.osbot.rs07.api.map.Position;
 
 public class Areas {
 
+	public static final Area FLYFISHING_AREA_BARB = new Area(3098,3421,3111,3437);
 	public static Area COOK_AREA1_CHEF_ROOM = new Area(3205, 3217, 3212, 3212);
 	public static Area COOK_AREA2_LUMBRIDGE_BASEMENT = new Area(3207, 9614, 3220, 9628);
 	public static Area COOK_AREA3_LUMBRIDGE_BASEMENT_BUCKET = new Area(3217, 9628, 3212, 9623);
@@ -109,5 +110,7 @@ public class Areas {
 			new Position(3269, 3160, 0), new Position(3269, 3172, 0), new Position(3272, 3174, 0) });
 
 	public static Area SCHRIMP_AREA_DRAYNOR = new Area(3079, 3238, 3088, 3222);
+	
+	public static Area COOKING_AREA_EDGEVILLE = new Area(3081,3496,3077,3489);
 
 }

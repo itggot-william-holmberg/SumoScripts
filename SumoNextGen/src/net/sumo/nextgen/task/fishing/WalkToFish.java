@@ -1,22 +1,21 @@
 package net.sumo.nextgen.task.fishing;
 
-import net.sumo.sumoscript.enums.PlayerTask;
-import net.sumo.sumoscript.task.Task;
+import net.sumo.nextgen.resources.Resources;
+import net.sumo.nextgen.task.Task;
 
 public class WalkToFish extends Task {
 
 	@Override
 	public boolean active() {
-		if (currentTask() == PlayerTask.FISH && !playerInArea(currentFishingAssignment().getFishingArea())
-				&& shouldFish()) {
+		if (!playerInArea(currentFishingAssignment().getFishingArea())
+				&& shouldFish()  && readyToFish()) {
 			return true;
 		}
 		return false;
 	}
 
-	@Override
-	public void run() throws InterruptedException {
-		r.STATE = "Walking to Fishing area";
+	public void execute() {
+		Resources.CURRENT_STATE = "Walking to Fishing area";
 		webWalk(currentFishingAssignment().getFishingArea().getRandomPosition());
 	}
 }

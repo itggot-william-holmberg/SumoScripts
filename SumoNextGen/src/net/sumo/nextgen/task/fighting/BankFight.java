@@ -6,7 +6,7 @@ import net.sumo.nextgen.task.Task;
 public class BankFight extends Task {
 	public boolean active() {
 		if (shouldFight() && playerInArea(getClosestBank())
-				&& !shouldFight(currentFightingAssignment().getGear())) {
+				&& !shouldFight(getCurrentGear()) && Resources.BUY_LIST.isEmpty()) {
 			return true;
 		}
 		return false;

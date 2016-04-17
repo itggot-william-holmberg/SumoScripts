@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.api.util.ExperienceTracker;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
@@ -17,13 +16,20 @@ import net.sumo.nextgen.frame.GuiTest;
 import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.stage.Stage;
 import net.sumo.nextgen.stage.StageType;
-import net.sumo.nextgen.stage.TaskTest;
 import net.sumo.nextgen.task.BuyItem;
 import net.sumo.nextgen.task.Task;
+import net.sumo.nextgen.task.cooking.Cook;
+import net.sumo.nextgen.task.cooking.CookBank;
+import net.sumo.nextgen.task.cooking.WalkToBankFromCook;
+import net.sumo.nextgen.task.cooking.WalkToCook;
 import net.sumo.nextgen.task.fighting.BankFight;
 import net.sumo.nextgen.task.fighting.Fight;
 import net.sumo.nextgen.task.fighting.WalkToBankFromFight;
 import net.sumo.nextgen.task.fighting.WalkToFight;
+import net.sumo.nextgen.task.fishing.Fish;
+import net.sumo.nextgen.task.fishing.FishBank;
+import net.sumo.nextgen.task.fishing.WalkToBankFromFish;
+import net.sumo.nextgen.task.fishing.WalkToFish;
 import net.sumo.nextgen.task.miner.DepositMining;
 import net.sumo.nextgen.task.miner.MineOre;
 import net.sumo.nextgen.task.miner.WalkToBankFromMining;
@@ -253,6 +259,20 @@ public class Nextgen extends Script {
 				tasks.add(new Fight().init(this));
 				tasks.add(new WalkToBankFromFight().init(this));
 				tasks.add(new WalkToFight().init(this));
+			} else if (Resources.currentStage == Stage.FISHING) {
+				// mining
+				log("fishing added");
+				tasks.add(new FishBank().init(this));
+				tasks.add(new Fish().init(this));
+				tasks.add(new WalkToBankFromFish().init(this));
+				tasks.add(new WalkToFish().init(this));
+			} else if (Resources.currentStage == Stage.COOKING) {
+				// mining
+				log("fishing added");
+				tasks.add(new CookBank().init(this));
+				tasks.add(new Cook().init(this));
+				tasks.add(new WalkToBankFromCook().init(this));
+				tasks.add(new WalkToCook().init(this));
 			}
 		}
 		// tasks.add(new Devmode().init(this));

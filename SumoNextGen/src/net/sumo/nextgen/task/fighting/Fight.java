@@ -6,7 +6,7 @@ public class Fight extends Task {
 
 	@Override
 	public boolean active() {
-		if (shouldFight() && playerInArea(currentFightingAssignment().getFightArea()) && shouldFight(currentFightingAssignment().getGear())) {
+		if (shouldFight() && playerInArea(currentFightingAssignment().getFightArea()) && shouldFight(getCurrentGear())) {
 			return true;
 		}
 		return false;

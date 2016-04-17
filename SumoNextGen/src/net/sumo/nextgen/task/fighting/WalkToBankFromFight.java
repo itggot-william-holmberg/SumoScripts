@@ -7,7 +7,7 @@ public class WalkToBankFromFight extends Task {
 
 	@Override
 	public boolean active() {
-		if (shouldFight() && !playerInArea(getClosestBank()) && !shouldFight(currentFightingAssignment().getGear())) {
+		if (shouldFight() && !playerInArea(getClosestBank()) && !shouldFight(getCurrentGear())) {
 			return true;
 		}
 		return false;

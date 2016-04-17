@@ -94,6 +94,8 @@ public class Resources {
 	public static int[] copperOreID = { 7484 };
 
 	public static int[] schrimpSpots = { 1525 };
+	
+	public static int[] flySpots = { 1526 };
 
 	public static int[] tinOreID = { 7485 };
 
@@ -137,5 +139,8 @@ public class Resources {
 	public static boolean withdrawItems = false;
 	public static List<TaskTest>taskTest = new ArrayList<TaskTest>();
 	public static Skill currentSkill;
+	public static String[] fishGearSchrimps = {"Small fishing net"};
+	public static String[] fishGearFlyFishing = {"Fly fishing rod", "Feather"};
+
 	
 }

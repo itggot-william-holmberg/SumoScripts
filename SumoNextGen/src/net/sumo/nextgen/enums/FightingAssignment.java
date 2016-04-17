@@ -11,7 +11,8 @@ import net.sumo.nextgen.resources.Areas;
 
 public enum FightingAssignment {
 	
-	SEAGULL("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_MELEE_SETUP);
+	SEAGULL("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_MELEE_SETUP),
+	SEAGULL_RANGE("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_RANGE_SETUP);
 	private String _name;
 	private Area _fightArea;
 	private Area _bankArea;
@@ -19,6 +20,12 @@ public enum FightingAssignment {
 	private GearSetups _gear;
 	private String[] _loot = null;
 	private String[] _inventoryItems;
+	private FightingAssignment(String name, Area fightArea, Area bankArea, Area walkableBankArea){
+		_name = name;
+		_fightArea = fightArea;
+		_bankArea = bankArea;
+		_walkableBankArea = walkableBankArea;
+	}
 	private FightingAssignment(String name, Area fightArea, Area bankArea, Area walkableBankArea, GearSetups gear){
 		_name = name;
 		_fightArea = fightArea;

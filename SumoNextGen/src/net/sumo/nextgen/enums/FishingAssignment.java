@@ -11,7 +11,8 @@ import net.sumo.nextgen.resources.Resources;
 
 public enum FishingAssignment {
 
-	SCHRIMPS_DRAYNOR(Resources.schrimpSpots, "Schrimps", "small fishing net", "net", Areas.SCHRIMP_AREA_DRAYNOR, Banks.DRAYNOR, Areas.BANK_AREA_WALKABLE_DRAYNOR, true);
+	SCHRIMPS_DRAYNOR(Resources.schrimpSpots, "Schrimps", Resources.fishGearSchrimps, "net", Areas.SCHRIMP_AREA_DRAYNOR, Banks.DRAYNOR, Areas.BANK_AREA_WALKABLE_DRAYNOR, true),
+	FLYFISHING_BARB(Resources.flySpots, "raw trout", Resources.fishGearFlyFishing, "lure", Areas.FLYFISHING_AREA_BARB, Banks.EDGEVILLE, Banks.EDGEVILLE, true);
 	
 	
 	private Area _fishingArea;
@@ -19,12 +20,13 @@ public enum FishingAssignment {
 	private String _fishName;
 	private int[] _fishingSpots;
 	private Area _bankPos;
-	private String _fishGear;
+	private String[] _fishGear;
 	private Area _depositPos;
 	private boolean _depositBox;
 	private Area _depositArea;
 	private String _action;
-	private FishingAssignment(int[] fishingSpots, String fishName,String fishGear, String action, Area fishingArea, Area bankArea, Area bankPos, boolean depositBox){
+	private String _fishBait;
+	private FishingAssignment(int[] fishingSpots, String fishName,String[] fishGear, String action, Area fishingArea, Area bankArea, Area bankPos, boolean depositBox){
 		_fishingSpots = fishingSpots;
 		_fishingArea = fishingArea;
 		_fishName = fishName;
@@ -35,6 +37,7 @@ public enum FishingAssignment {
 		_action = action;
 	}
 	
+	
 	public Area getFishingArea(){
 		return _fishingArea;
 	}
@@ -43,8 +46,13 @@ public enum FishingAssignment {
 		return _fishName;
 	}
 	
-	public String getFishGear(){
+	public String[] getFishGear(){
 		return _fishGear;
+	}
+	
+
+	public String getFishBait(){
+		return _fishBait;
 	}
 	
 	public Area getBankArea(){

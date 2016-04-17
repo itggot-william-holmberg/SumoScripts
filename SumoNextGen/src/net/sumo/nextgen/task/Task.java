@@ -31,6 +31,7 @@ import net.sumo.grandexchange.GrandExchangeAPI;
 import net.sumo.grandexchange.GrandExchangePriceAPI;
 import net.sumo.nextgen.Nextgen;
 import net.sumo.nextgen.enums.AttackStyle;
+import net.sumo.nextgen.enums.CookingAssignment;
 import net.sumo.nextgen.enums.FightingAssignment;
 import net.sumo.nextgen.enums.FishingAssignment;
 import net.sumo.nextgen.enums.GenItem;
@@ -38,6 +39,7 @@ import net.sumo.nextgen.enums.MiningAssigment;
 import net.sumo.nextgen.enums.WCAssignment;
 import net.sumo.nextgen.enums.WebBank;
 import net.sumo.nextgen.gear.GearSetups;
+import net.sumo.nextgen.gear.Gears;
 import net.sumo.nextgen.queststage.CooksAssistantStage;
 import net.sumo.nextgen.queststage.RestlessGhostStage;
 import net.sumo.nextgen.queststage.RomeoAndJulietStage;
@@ -108,11 +110,10 @@ public abstract class Task {
 	}
 
 	public Stage getStage() {
-		s.log(getStrLevel());
 		if (Resources.BUY_LIST.isEmpty()) {
 			if (Resources.currentStage != null) {
 				if (Resources.currentStage.getType() == StageType.QUEST) {
-					if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {	
+					if (!isQuestCompleted(Quest.valueOf(Resources.currentStage.getQuestName()))) {
 						return Resources.currentStage;
 					}
 				} else if (Resources.currentStage.getType() == StageType.COMBAT
@@ -163,11 +164,49 @@ public abstract class Task {
 		return getStage() == Stage.WOODCUTTING;
 	}
 
+	public boolean shouldCook() {
+		return getStage() == Stage.COOKING && Resources.WITHDRAW_LIST.isEmpty();
+	}
+
+	public CookingAssignment currentCookingAssignment() {
+		if (getCookingLevel() < 20) {
+			return CookingAssignment.SCHRIMP_EDGEVILLE;
+		}
+		return CookingAssignment.TROUT_EDGEVILLE;
+	}
+
+	public int getCookingLevel() {
+		return getLevel(Skill.COOKING);
+	}
+
 	public WCAssignment currentWCAssignment() {
 		if (getWCLevel() < 21) {
 			return WCAssignment.NORMAL_TREE_LUMBRIDGE;
 		}
 		return WCAssignment.NORMAL_TREE_LUMBRIDGE;
+	}
+
+	public boolean readyToCook() {
+		return inventoryContains(currentCookingAssignment().getRawFoodName());
+	}
+
+	public GearSetups getCurrentGear() {
+		if (currentFightingAssignment().getGear() != null) {
+			return currentFightingAssignment().getGear();
+		} else {
+			if (getStage().getSkill() == Skill.RANGED) {
+				// add range setup
+			} else if (getStage().getSkill() == Skill.MAGIC) {
+				// add magic setup
+			} else {
+				if (getAttLevel() < 20 && getDefLevel() < 20) {
+					return GearSetups.STARTER_MELEE_SETUP;
+				} else if (getAttLevel() < 40 && getDefLevel() < 40) {
+					// return rune
+				}
+			}
+		}
+		return GearSetups.STARTER_MELEE_SETUP;
 	}
 
 	/*
@@ -263,6 +302,60 @@ public abstract class Task {
 			return RomeoAndJulietStage.START_QUEST;
 		}
 		return null;
+	}
+
+	public int random(int i) {
+		Random r = new Random();
+		return r.nextInt(i);
+	}
+
+	public void FishingAntiBan() {
+		switch (Script.random(1, 250)) {
+		case 1:
+			s.camera.movePitch(random(60));
+			break;
+		case 2:
+			s.camera.moveYaw(100 + (Script.random(1, 70)));
+			break;
+		case 3:
+			s.tabs.open(Tab.SKILLS);
+			break;
+		case 4:
+			s.tabs.open(Tab.SKILLS);
+			break;
+		case 5:
+			s.tabs.open(Tab.QUEST);
+			break;
+		case 8:
+			s.tabs.open(Tab.CLANCHAT);
+			break;
+		case 9:
+			s.tabs.open(Tab.FRIENDS);
+			break;
+		case 10:
+			s.log("sleep 10000");
+			s.mouse.moveOutsideScreen();
+			sleep(Script.random(5000, 10000));
+			break;
+		case 11:
+			s.log("sleep60000");
+			s.mouse.moveOutsideScreen();
+			sleep(Script.random(60000, 100000));
+			break;
+		case 12:
+			s.log("sleep 23000");
+			s.mouse.moveOutsideScreen();
+			sleep(Script.random(15000, 23000));
+			break;
+		case 13:
+			s.log("sleep100000");
+			s.mouse.moveOutsideScreen();
+			sleep(Script.random(73000, 150000));
+			break;
+		}
+		sleep(Script.random(700, 1800));
+		s.tabs.open(Tab.INVENTORY); // RETURNS TO THE INVENTORY TAB AFTER EVERY
+									// ANTIBAN INSTANCE
 	}
 
 	public void SkillingAntiBan() throws InterruptedException {
@@ -745,7 +838,20 @@ public abstract class Task {
 	}
 
 	public boolean shouldFish() {
-		return inventoryContains(currentFishingAssignment().getFishGear()) && !inventoryIsFull();
+		return getStage().getSkill() == Skill.FISHING && Resources.BUY_LIST.isEmpty();
+	}
+
+	public boolean inventoryContainsAllFishGear() {
+		for (String item : currentFishingAssignment().getFishGear()) {
+			if (!inventoryContains(item)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean readyToFish() {
+		return inventoryContainsAllFishGear() && !inventoryIsFull();
 	}
 
 	public boolean shouldFight() {
@@ -1113,11 +1219,19 @@ public abstract class Task {
 	}
 
 	public FightingAssignment currentFightingAssignment() {
+		if(getStage().getSkill() == Skill.RANGED){
+			return FightingAssignment.SEAGULL_RANGE;
+		}
 		return FightingAssignment.SEAGULL;
 	}
 
 	public FishingAssignment currentFishingAssignment() {
-		return FishingAssignment.SCHRIMPS_DRAYNOR;
+		if (getFishingLevel() < 20) {
+			return FishingAssignment.SCHRIMPS_DRAYNOR;
+		} else if (getFishingLevel() < 60) {
+			return FishingAssignment.FLYFISHING_BARB;
+		}
+		return FishingAssignment.FLYFISHING_BARB;
 	}
 
 	public WCAssignment currentWCAssigment() {
@@ -1177,7 +1291,11 @@ public abstract class Task {
 				s.log("lets click train def1");
 				s.log(attackStyle());
 				s.mouse.click(701, 335, false); // click "train def"
+			}	else if (getStage().getSkill() == Skill.RANGED && (attackStyle() != 1)) {
+				s.log("lets click train str1");
+				s.mouse.click(689, 270, false);// click "train strength"
 			}
+
 
 		} else {
 
@@ -1212,6 +1330,9 @@ public abstract class Task {
 	}
 
 	public boolean shouldFight(GearSetups gear) {
+		if(!Resources.BUY_LIST.isEmpty()){
+			return false;
+		}
 		return !needToWithdrawGear(gear) || needToDeposit();
 	}
 
@@ -1365,8 +1486,17 @@ public abstract class Task {
 
 					int secondPrice = (int) (firstPrice + firstPrice * 0.4 + 200);
 					while (!s.inventory.contains(item)) {
-						ge.collectItems(false);
-						ge.createBuyOffer(item, secondPrice, 1);
+						if (item.equals("Feather")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 10, 2000);
+						}else if (item.equals("Bronze arrow")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 15, 2000);
+						}  else {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, secondPrice, 1);
+						}
+
 					}
 					if (s.inventory.contains(item)) {
 						Resources.BUY_LIST.remove(genItem);
@@ -1442,7 +1572,7 @@ public abstract class Task {
 	public void withdrawSellables() {
 		NPC banker = s.npcs.closest("Banker");
 		if (bankIsOpen()) {
-			if(s.inventory.getEmptySlots() < 15){
+			if (s.inventory.getEmptySlots() < 15) {
 				s.bank.depositAll();
 			}
 			while (s.bank.contains(Resources.SELLABLE_ITEMS)) {
@@ -1585,13 +1715,15 @@ public abstract class Task {
 	}
 
 	public boolean needToWithdrawGear(GearSetups gear) {
-		s.widgets.closeOpenInterface();
 		int test = 0;
 		for (int i = 0; i < gear.getFullGear().size(); i++) {
 			if (s.getEquipment().contains(gear.getFullGear().get(i).toString())) {
 				test++;
 			} else {
 				if (s.inventory.contains(gear.getFullGear().get(i).toString())) {
+					if(s.grandExchange.isOpen() || s.bank.isOpen()){
+						s.widgets.closeOpenInterface();
+					}
 					Item item = s.inventory.getItem(gear.getFullGear().get(i).toString());
 					if (item.hasAction("Wield")) {
 						s.log("lets wield");
@@ -1625,7 +1757,6 @@ public abstract class Task {
 		for (GenItem genItem : GenItem.values()) {
 			if (genItem.getItemName().equals(itemName)) {
 				s.log("item exists, we have all data needed. lets add to buy list");
-				Resources.BUY_LIST.add(genItem);
 				Null = false;
 				return genItem;
 			}
@@ -1642,8 +1773,14 @@ public abstract class Task {
 		if (bankIsOpen()) {
 			for (GenItem genItem : Resources.WITHDRAW_LIST) {
 				if (s.bank.contains(genItem.getItemName())) {
+					if(genItem.getItemName() == "Feather"){
+						s.bank.withdraw(genItem.getItemID(), 2000);
+					}else if(genItem.getItemName() == "Bronze arrow"){
+						s.bank.withdraw(genItem.getItemID(), 2000);
+					}else{
 					s.bank.withdraw(genItem.getItemID(), 1);
 					sleep(1350, 1530);
+					}
 				} else {
 					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
 						s.log("adding " + genItem.getItemName() + " to buy list");
@@ -1659,7 +1796,7 @@ public abstract class Task {
 	public void withdrawNeededItems(String item) {
 		if (bankIsOpen()) {
 			GenItem genItem = getGenItem(item);
-			if(genItem != null){
+			if (genItem != null) {
 				if (s.bank.contains(genItem.getItemName())) {
 					s.bank.withdraw(genItem.getItemID(), 1);
 					sleep(1350, 1530);
@@ -1669,7 +1806,28 @@ public abstract class Task {
 						Resources.BUY_LIST.add(genItem);
 					}
 				}
-			}else{
+			} else {
+				s.log(item + " does not exist, we have to add it to our enums");
+			}
+		} else {
+			openBank();
+		}
+	}
+
+	public void withdrawNeededItems(int amount, String item) {
+		if (bankIsOpen()) {
+			GenItem genItem = getGenItem(item);
+			if (genItem != null) {
+				if (s.bank.contains(genItem.getItemName())) {
+					s.bank.withdraw(genItem.getItemID(), amount);
+					sleep(1350, 1530);
+				} else {
+					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
+						s.log("adding " + genItem.getItemName() + " to buy list");
+						Resources.BUY_LIST.add(genItem);
+					}
+				}
+			} else {
 				s.log(item + " does not exist, we have to add it to our enums");
 			}
 		} else {

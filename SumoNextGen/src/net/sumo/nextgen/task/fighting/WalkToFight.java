@@ -8,7 +8,7 @@ public class WalkToFight extends Task {
 	@Override
 	public boolean active() {
 		if (shouldFight() && !playerInArea(currentFightingAssignment().getFightArea())
-				&& shouldFight(currentFightingAssignment().getGear())) {
+				&& shouldFight(getCurrentGear())) {
 			return true;
 		}
 		return false;
