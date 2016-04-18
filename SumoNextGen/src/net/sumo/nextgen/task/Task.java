@@ -843,7 +843,9 @@ public abstract class Task {
 
 	public boolean inventoryContainsAllFishGear() {
 		for (String item : currentFishingAssignment().getFishGear()) {
+			s.log(item);
 			if (!inventoryContains(item)) {
+				
 				return false;
 			}
 		}
@@ -1798,8 +1800,12 @@ public abstract class Task {
 			GenItem genItem = getGenItem(item);
 			if (genItem != null) {
 				if (s.bank.contains(genItem.getItemName())) {
+					if(genItem.getItemName() == "Feather"){
+						s.bank.withdraw(genItem.getItemID(), 2000);
+					}else{
 					s.bank.withdraw(genItem.getItemID(), 1);
 					sleep(1350, 1530);
+					}
 				} else {
 					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
 						s.log("adding " + genItem.getItemName() + " to buy list");
