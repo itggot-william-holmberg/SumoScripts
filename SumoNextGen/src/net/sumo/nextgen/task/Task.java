@@ -152,6 +152,10 @@ public abstract class Task {
 				}
 			}
 		} else {
+			s.log("buy item");
+			Resources.lastStage = Resources.currentStage;
+			Resources.stageBefore = Resources.currentStage;
+			Resources.currentStage = Stage.BUY_ITEMS;
 			return Stage.BUY_ITEMS;
 		}
 
@@ -170,9 +174,16 @@ public abstract class Task {
 
 	public CookingAssignment currentCookingAssignment() {
 		if (getCookingLevel() < 20) {
-			return CookingAssignment.SCHRIMP_EDGEVILLE;
+			return CookingAssignment.SCHRIMP_KHARID;
+		}else if(getCookingLevel() < 35){
+			return CookingAssignment.TROUT_KHARID;
+		}else if(getCookingLevel() < 48){
+			return CookingAssignment.SALMON_KHARID;
 		}
-		return CookingAssignment.TROUT_EDGEVILLE;
+		else if(getCookingLevel() < 54){
+			return CookingAssignment.TROUT_KHARID;
+		}
+		return CookingAssignment.SALMON_EDGEVILLE;
 	}
 
 	public int getCookingLevel() {
@@ -195,7 +206,11 @@ public abstract class Task {
 			return currentFightingAssignment().getGear();
 		} else {
 			if (getStage().getSkill() == Skill.RANGED) {
-				// add range setup
+				if(getLevel(Skill.RANGED)<30){
+					return GearSetups.STARTER_RANGE_SETUP;
+				}else{
+					return GearSetups.THIRTHY_RANGE_SETUP;
+				}
 			} else if (getStage().getSkill() == Skill.MAGIC) {
 				// add magic setup
 			} else {
@@ -207,6 +222,21 @@ public abstract class Task {
 			}
 		}
 		return GearSetups.STARTER_MELEE_SETUP;
+	}
+	
+	public boolean myPlayerNeedsToEat() {
+		if(currentFightingAssignment().getEat() == false){
+			return false;
+		}
+		if (s.myPlayer().getHealthPercent() < 45) {
+			s.log(s.myPlayer().getCurrentHealth());
+			s.log(s.myPlayer().getHealthPercent());
+			s.log("needs to eat");
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	/*
@@ -978,7 +1008,7 @@ public abstract class Task {
 	public NPC getClosestFreeNPC(String name) {
 		return s.getNpcs()
 				.closest(npc -> !npc.isUnderAttack() && npc.getHealthPercent() > 0 && npc.getInteracting() == null
-						&& npc.getName().equals(name) && npc.exists() && npc.hasAction("Attack"));
+						&& npc.getName().equals(name) && npc.exists() && currentFightingAssignment().getFightArea().contains(npc) && npc.hasAction("Attack"));
 		/*
 		 * return s.getNpcs().getAll().stream() .filter(npc -> (npc.exists() &&
 		 * npc.getName().equalsIgnoreCase(name)) && npc.getInteracting() == null
@@ -1222,7 +1252,19 @@ public abstract class Task {
 
 	public FightingAssignment currentFightingAssignment() {
 		if(getStage().getSkill() == Skill.RANGED){
-			return FightingAssignment.SEAGULL_RANGE;
+			if(getLevel(Skill.RANGED) < 30){
+				return FightingAssignment.SEAGULL_RANGE;
+			}else{
+				return FightingAssignment.AL_KHARID_WARRIOR_RANGE;
+			}
+			
+		}if(getStage().getType() == StageType.COMBAT){
+			if(getAttLevel() < 30){
+				return FightingAssignment.SEAGULL_RANGE;
+			}else{
+				return FightingAssignment.AL_KHARID_WARRIOR;
+			}
+			
 		}
 		return FightingAssignment.SEAGULL;
 	}
@@ -1332,6 +1374,9 @@ public abstract class Task {
 	}
 
 	public boolean shouldFight(GearSetups gear) {
+		if(currentFightingAssignment().getEat() == true && !inventoryContains("Trout")){
+			return false;
+		}
 		if(!Resources.BUY_LIST.isEmpty()){
 			return false;
 		}
@@ -1468,9 +1513,26 @@ public abstract class Task {
 		}
 
 	}
+	
+	public void eat() {
+
+		if ((s.inventory.contains("Trout") && s.myPlayer().getHealthPercent() < 45) || s.inventory.isFull()) {
+			s.log("lets eat");
+			s.inventory.interact("Eat", "Trout");
+
+			sleep(500, 750);
+
+		} else {
+
+			s.log("Player needs to eat but something is wrong");
+
+		}
+
+	}
 
 	public void buyItems() {
 		if (s.inventory.contains(995)) {
+			int coinsAmount = getAmount("coins");
 			if (Resources.WITHDRAW_LIST.contains("coins")) {
 				Resources.WITHDRAW_LIST.remove("coins");
 			} else if (!s.getGrandExchange().isOpen()) { // Checks if ge is open
@@ -1487,16 +1549,25 @@ public abstract class Task {
 					}
 
 					int secondPrice = (int) (firstPrice + firstPrice * 0.4 + 200);
-					while (!s.inventory.contains(item)) {
+					while (!s.inventory.contains(item) && getStage() == Stage.BUY_ITEMS) {
 						if (item.equals("Feather")) {
 							ge.collectItems(false);
-							ge.createBuyOffer(item, 10, 2000);
+							ge.createBuyOffer(item, 10, 2000,coinsAmount);
 						}else if (item.equals("Bronze arrow")) {
+							s.log("testing with bronze arrow");
 							ge.collectItems(false);
-							ge.createBuyOffer(item, 15, 2000);
-						}  else {
+							ge.createBuyOffer(item, 15, 2000,coinsAmount);
+						}else if (item.equals("Mithril platebody") || item.equals("Mithril platelegs")|| 
+								item.equals("Mithril full helm") || item.equals("Mithril kiteshield")|| 
+								item.equals("Mithril scimitar") ) {
 							ge.collectItems(false);
-							ge.createBuyOffer(item, secondPrice, 1);
+							ge.createBuyOffer(item, 5500, 1,coinsAmount);
+						}  else if (item.equals("Trout")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, secondPrice, 300,coinsAmount);
+						} else {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, secondPrice, 1,coinsAmount);
 						}
 
 					}
@@ -1739,9 +1810,11 @@ public abstract class Task {
 						test++;
 					}
 				} else {
+					s.log(Resources.WITHDRAW_LIST);
 					if (!Resources.WITHDRAW_LIST.contains(gear.getFullGear().get(i))) {
-						s.log("we need" + gear.getFullGear().get(i));
+						s.log("we need " + gear.getFullGear().get(i));
 						Resources.WITHDRAW_LIST.add(getGenItem(gear.getFullGear().get(i)));
+						sleep(1000);
 					}
 				}
 			}
@@ -1758,7 +1831,7 @@ public abstract class Task {
 		boolean Null = true;
 		for (GenItem genItem : GenItem.values()) {
 			if (genItem.getItemName().equals(itemName)) {
-				s.log("item exists, we have all data needed. lets add to buy list");
+				//s.log("item exists, we have all data needed. lets add to buy list");
 				Null = false;
 				return genItem;
 			}
@@ -1773,8 +1846,17 @@ public abstract class Task {
 
 	public void withdrawNeededItems() {
 		if (bankIsOpen()) {
+			if(s.bank.isFull()){
+				s.log(Resources.WITHDRAW_LIST);
+				s.bank.depositAll();
+			}
 			for (GenItem genItem : Resources.WITHDRAW_LIST) {
-				if (s.bank.contains(genItem.getItemName())) {
+				s.log(genItem.getItemName());
+				if(inventoryContains(genItem.getItemName()) || s.equipment.contains(genItem.getItemName())){
+					Resources.WITHDRAW_LIST.remove(genItem);
+					s.log("remove");
+				}
+				else if (s.bank.contains(genItem.getItemName())) {
 					if(genItem.getItemName() == "Feather"){
 						s.bank.withdraw(genItem.getItemID(), 2000);
 					}else if(genItem.getItemName() == "Bronze arrow"){
@@ -1783,7 +1865,7 @@ public abstract class Task {
 					s.bank.withdraw(genItem.getItemID(), 1);
 					sleep(1350, 1530);
 					}
-				} else {
+				} else if (!inventoryContains(genItem.getItemName()) && !s.equipment.contains(genItem.getItemName()) && !s.bank.contains(genItem.getItemName())) {
 					if (!Resources.BUY_LIST.contains(genItem.getItemName())) {
 						s.log("adding " + genItem.getItemName() + " to buy list");
 						Resources.BUY_LIST.add(genItem);

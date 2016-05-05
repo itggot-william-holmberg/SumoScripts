@@ -18,10 +18,11 @@ public class BankFight extends Task {
 		if (!Resources.WITHDRAW_LIST.isEmpty()) {
 			s.log("lets withdraw items");
 			withdrawNeededItems();
-		} else if (needToDeposit()) {
-			depositAllExcept(currentFightingAssignment().getInventory());
-		}
-
+		} else if(s.inventory.isFull()){
+			depositAll();
+		}	else if (currentFightingAssignment().getEat() == true && !inventoryContains("Trout")){
+				withdrawNeededItems(20, "Trout");		
+		} 
 	}
 
 }

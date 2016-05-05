@@ -11,8 +11,11 @@ import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.RS2Widget;
+import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.script.Script;
 import org.osbot.rs07.utility.ConditionalSleep;
+
+import net.sumo.nextgen.resources.Resources;
 
 public class GrandExchangeAPI {
 	private final Script parent;
@@ -82,8 +85,37 @@ public class GrandExchangeAPI {
 
 	}
 
-	public void createBuyOffer(String itemName, int price, int amount) {
-		if (parent.getGrandExchange().isOpen()) {
+	public void createBuyOffer(String itemName, int price, int amount,int totalMoney) {
+		if((price * amount) >= totalMoney){
+			/*Resources.taskTest.forEach(task ->{
+				if(task.getStage() == Resources.lastStage){
+					parent.log("lets remove" + task.getStage());
+					Resources.taskTest.remove(task);
+				}
+				if(task.getStage() == Resources.stageBefore){
+					parent.log("lets remove" + task.getStage());
+					Resources.taskTest.remove(task);
+				}
+				if(task.getStage() == Resources.currentStage){
+					parent.log("lets remove" + task.getStage());
+					Resources.taskTest.remove(task);
+				}
+			});
+			parent.log(Resources.taskTest);
+			Resources.WITHDRAW_LIST.clear();
+			Resources.BUY_LIST.clear();
+			parent.log("removed everything");
+			try {
+				parent.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+			parent.stop();
+			parent.stop();
+			parent.log("not enough money");
+		}
+		else if (parent.getGrandExchange().isOpen()) {
 			if (!parent.getGrandExchange().isBuyOfferOpen()) {
 				initBuyOffer(itemName);
 			}

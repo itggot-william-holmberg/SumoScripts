@@ -141,6 +141,8 @@ public class Resources {
 	public static Skill currentSkill;
 	public static String[] fishGearSchrimps = {"Small fishing net"};
 	public static String[] fishGearFlyFishing = {"Fly fishing rod", "Feather"};
+	public static Stage lastStage;
+	public static Stage stageBefore;
 
 	
 }

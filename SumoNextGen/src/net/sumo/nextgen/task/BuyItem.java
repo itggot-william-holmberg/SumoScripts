@@ -15,6 +15,7 @@ public class BuyItem extends Task {
 	@Override
 	public boolean active() {
 		if (getStage() == Stage.BUY_ITEMS) {
+			s.log("still buy items");
 			return true;
 		}
 		return false;

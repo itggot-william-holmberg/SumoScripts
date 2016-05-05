@@ -65,7 +65,7 @@ import net.sumo.nextgen.task.woodcutter.CutTree;
 import net.sumo.nextgen.task.woodcutter.WalkToBankFromWC;
 import net.sumo.nextgen.task.woodcutter.WalkToWCPlace;
 
-@ScriptManifest(author = "Sumo", info = "NextGen", logo = "", name = "Nextgen", version = 0)
+@ScriptManifest(author = "Sumo", info = "NextGen", logo = "", name = "Nextgens", version = 0.1)
 public class Nextgen extends Script {
 	public static List<Task> tasks = new ArrayList<Task>();
 	private long timeRan;
@@ -187,6 +187,7 @@ public class Nextgen extends Script {
 			addTask();
 			taskBegan = System.currentTimeMillis();
 			lastStage = Resources.currentStage;
+			Resources.lastStage = lastStage;
 		}
 
 	}

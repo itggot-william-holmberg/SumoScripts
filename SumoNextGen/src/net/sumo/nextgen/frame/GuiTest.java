@@ -102,8 +102,8 @@ public class GuiTest {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < Resources.TASKTEST_LIST.size();) {
-					Resources.TASKTEST_LIST.remove(Resources.TASKTEST_LIST.get(i));
+				for (int i = 0; i < Resources.taskTest.size();) {
+					Resources.taskTest.remove(Resources.taskTest.get(i));
 					i++;
 				}
 				for (int i = 0; i < destList.getModel().getSize();) {

@@ -17,6 +17,6 @@ public class WalkToBankFromCook extends Task {
 	@Override
 	public void execute() {
 		Resources.CURRENT_STATE = "Walking to Bank";
-		webWalk(currentFishingAssignment().getBankPos());
+		webWalk(WebBank.getNearest(s).getArea());
 	}
 }

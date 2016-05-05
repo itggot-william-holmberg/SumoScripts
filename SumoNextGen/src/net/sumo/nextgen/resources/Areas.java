@@ -6,6 +6,8 @@ import org.osbot.rs07.api.map.Position;
 public class Areas {
 
 	public static final Area FLYFISHING_AREA_BARB = new Area(3098,3421,3111,3437);
+	public static final Area AL_KHARID_WARRIOR_AREA = new Area(3299,3177,3303,3167);
+	public static final Area AL_KHARID_COOKING_AREA = new Area(3275,3179,3271,3182);
 	public static Area COOK_AREA1_CHEF_ROOM = new Area(3205, 3217, 3212, 3212);
 	public static Area COOK_AREA2_LUMBRIDGE_BASEMENT = new Area(3207, 9614, 3220, 9628);
 	public static Area COOK_AREA3_LUMBRIDGE_BASEMENT_BUCKET = new Area(3217, 9628, 3212, 9623);

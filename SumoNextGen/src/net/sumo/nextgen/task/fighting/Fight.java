@@ -1,6 +1,13 @@
 package net.sumo.nextgen.task.fighting;
 
+import java.io.IOException;
+
+import org.osbot.rs07.api.model.NPC;
+import org.osbot.rs07.api.ui.Skill;
+
+import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.task.Task;
+
 
 public class Fight extends Task {
 
@@ -16,12 +23,22 @@ public class Fight extends Task {
 	public void execute() {
 		s.log("fight is called");
 		checkStyle();
-		try {
-			fight(currentFightingAssignment().getName());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (myPlayerNeedsToEat()) {
+			eat();
+			try {
+				fight(currentFightingAssignment().getName());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			try {
+				fight(currentFightingAssignment().getName());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
 	}
 
 }
