@@ -22,6 +22,9 @@ import net.sumo.nextgen.task.cooking.Cook;
 import net.sumo.nextgen.task.cooking.CookBank;
 import net.sumo.nextgen.task.cooking.WalkToBankFromCook;
 import net.sumo.nextgen.task.cooking.WalkToCook;
+import net.sumo.nextgen.task.crafting.Craft;
+import net.sumo.nextgen.task.crafting.CraftBank;
+import net.sumo.nextgen.task.crafting.WalkToCraft;
 import net.sumo.nextgen.task.fighting.BankFight;
 import net.sumo.nextgen.task.fighting.Fight;
 import net.sumo.nextgen.task.fighting.WalkToBankFromFight;
@@ -65,7 +68,7 @@ import net.sumo.nextgen.task.woodcutter.CutTree;
 import net.sumo.nextgen.task.woodcutter.WalkToBankFromWC;
 import net.sumo.nextgen.task.woodcutter.WalkToWCPlace;
 
-@ScriptManifest(author = "Sumo", info = "NextGen", logo = "", name = "Nextgens", version = 0.1)
+@ScriptManifest(author = "Sumo", info = "NextGenzs", logo = "", name = "Nextgesn", version = 0.1)
 public class Nextgen extends Script {
 	public static List<Task> tasks = new ArrayList<Task>();
 	private long timeRan;
@@ -274,6 +277,12 @@ public class Nextgen extends Script {
 				tasks.add(new Cook().init(this));
 				tasks.add(new WalkToBankFromCook().init(this));
 				tasks.add(new WalkToCook().init(this));
+			}else if (Resources.currentStage == Stage.CRAFTING) {
+				// mining
+				log("fishing added");
+				tasks.add(new CraftBank().init(this));
+				tasks.add(new Craft().init(this));
+				tasks.add(new WalkToCraft().init(this));
 			}
 		}
 		// tasks.add(new Devmode().init(this));

@@ -14,7 +14,7 @@ public enum FightingAssignment {
 	
 	SEAGULL("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_MELEE_SETUP),
 	SEAGULL_RANGE("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_RANGE_SETUP),
-	SEAGULL_MAGE("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_MAGE_SETUP),
+	SEAGULL_MAGE("Seagull", Areas.SEAGULL_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.STARTER_MAGE_SETUP, Resources.COW_LOOT, Resources.WIND_STRIKE_RUNES),
 	AL_KHARID_WARRIOR("Al-Kharid warrior", Areas.AL_KHARID_WARRIOR_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.MITHRIL_MELEE_SETUP, true),
 	AL_KHARID_WARRIOR_RANGE("Al-Kharid warrior", Areas.AL_KHARID_WARRIOR_AREA, Areas.GRAND_EXCHANGE_AREA, Areas.GRAND_EXCHANGE_AREA, GearSetups.THIRTHY_RANGE_SETUP, true);
 	
@@ -64,6 +64,8 @@ public enum FightingAssignment {
 		_loot = loot;
 		_inventoryItems = inventoryItems;
 	}
+	
+	
 	
 	public String getName(){
 		return _name;

@@ -1,5 +1,7 @@
 package net.sumo.nextgen.task.fighting;
 
+import java.util.Arrays;
+
 import net.sumo.nextgen.resources.Resources;
 import net.sumo.nextgen.task.Task;
 
@@ -20,9 +22,21 @@ public class BankFight extends Task {
 			withdrawNeededItems();
 		} else if(s.inventory.isFull()){
 			depositAll();
-		}	else if (currentFightingAssignment().getEat() == true && !inventoryContains("Trout")){
-				withdrawNeededItems(20, "Trout");		
+		}
+		else if (currentFightingAssignment().getInventory() != null && !inventoryContains(currentFightingAssignment().getInventory())){
+			Arrays.asList(currentFightingAssignment().getInventory()).forEach(item -> {
+				if(!invContains(item)){
+					if(item.contains("rune")){
+						withdrawNeededItems(15000, item);
+					}
+				}
+			});		
 		} 
+		else if (currentFightingAssignment().getEat() == true && !inventoryContains("Trout")){
+				withdrawNeededItems(20, "Trout");		
+		} else if(invContains("coins")){
+			depositAll("Coins");
+		}
 	}
 
 }

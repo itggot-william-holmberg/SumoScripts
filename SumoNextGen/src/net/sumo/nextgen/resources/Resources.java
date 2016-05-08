@@ -20,6 +20,7 @@ public class Resources {
 
 
 	public static final int QUEST = 0;
+	public static final String WIND_STRIKE_RUNES[] = {GenItem.fireRune.getItemName(), GenItem.airRune.getItemName(), GenItem.mindRune.getItemName()};
 	public static List<TaskTest> TASKTEST_LIST = new ArrayList<TaskTest>();
 
 	public static List<GenItem> WITHDRAW_LIST = new ArrayList<GenItem>();

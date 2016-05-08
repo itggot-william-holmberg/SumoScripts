@@ -22,7 +22,9 @@ public class Fight extends Task {
 	@Override
 	public void execute() {
 		s.log("fight is called");
-		checkStyle();
+		if(getStage().getSkill() != Skill.MAGIC){
+			checkStyle();
+		}
 		if (myPlayerNeedsToEat()) {
 			eat();
 			try {

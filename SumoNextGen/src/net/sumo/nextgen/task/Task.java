@@ -29,9 +29,12 @@ import org.osbot.rs07.script.Script;
 
 import net.sumo.grandexchange.GrandExchangeAPI;
 import net.sumo.grandexchange.GrandExchangePriceAPI;
+import net.sumo.magic.Autocast;
+import net.sumo.magic.AutocastSpell;
 import net.sumo.nextgen.Nextgen;
 import net.sumo.nextgen.enums.AttackStyle;
 import net.sumo.nextgen.enums.CookingAssignment;
+import net.sumo.nextgen.enums.CraftingAssignment;
 import net.sumo.nextgen.enums.FightingAssignment;
 import net.sumo.nextgen.enums.FishingAssignment;
 import net.sumo.nextgen.enums.GenItem;
@@ -171,6 +174,10 @@ public abstract class Task {
 	public boolean shouldCook() {
 		return getStage() == Stage.COOKING && Resources.WITHDRAW_LIST.isEmpty();
 	}
+	
+	public boolean shouldCraft() {
+		return getStage() == Stage.CRAFTING && Resources.WITHDRAW_LIST.isEmpty();
+	}
 
 	public CookingAssignment currentCookingAssignment() {
 		if (getCookingLevel() < 20) {
@@ -185,9 +192,30 @@ public abstract class Task {
 		}
 		return CookingAssignment.SALMON_EDGEVILLE;
 	}
+	
+	public CraftingAssignment currentCraftingAssignment() {
+		if (getCraftingLevel() < 7) {
+			return CraftingAssignment.LEATHER_GLOVES;
+		}else if(getCraftingLevel() < 9){
+			return CraftingAssignment.LEATHER_BOOTS;
+		}else if(getCraftingLevel() < 11){
+			return CraftingAssignment.LEATHER_COWL;
+		}
+		else if(getCraftingLevel() < 14){
+			return CraftingAssignment.LEATHER_VAMBRACES;
+		}
+		else if(getCraftingLevel() < 18){
+			return CraftingAssignment.LEATHER_BODY;
+		}
+		return CraftingAssignment.LEATHER_CHAPS;
+	}
 
 	public int getCookingLevel() {
 		return getLevel(Skill.COOKING);
+	}
+	
+	public int getCraftingLevel() {
+		return getLevel(Skill.CRAFTING);
 	}
 
 	public WCAssignment currentWCAssignment() {
@@ -199,6 +227,13 @@ public abstract class Task {
 
 	public boolean readyToCook() {
 		return inventoryContains(currentCookingAssignment().getRawFoodName());
+	}
+	
+	public boolean readyToCraft() {
+		if(currentCraftingAssignment().getRawMaterial() == "Leather"){
+			return (inventoryContains(currentCraftingAssignment().getRawMaterial()) && !s.getInventory().getItem(currentCraftingAssignment().getRawMaterial()).isNote()) && inventoryContains("Needle") && inventoryContains("Thread");
+		}
+		return false;
 	}
 
 	public GearSetups getCurrentGear() {
@@ -649,6 +684,16 @@ public abstract class Task {
 			sleep(1000, 1250);
 		} else {
 			s.getObjects().closest(object).interact("Use");
+			sleep(750, 1375);
+		}
+	}
+	
+	public void interactItemWithItem(String item, String object) {
+		if (!s.inventory.isItemSelected()) {
+			s.getInventory().getItem(item).interact("Use");
+			sleep(1000, 1250);
+		} else {
+			s.getInventory().getItem(object).interact("Use");
 			sleep(750, 1375);
 		}
 	}
@@ -1203,15 +1248,43 @@ public abstract class Task {
 			sleep(100);
 		}
 	}
+	
+	private Autocast auto = new Autocast(s);
 
 	public void fight(String name) throws InterruptedException {
 		prepareForFight(name);
 		if (shouldLoot()) {
 			loot();
 		} else {
+			if(getStage().getSkill() == Skill.MAGIC  && s.getConfigs().get(108) == 0){
+						if(s.widgets.isVisible(201)){
+								s.mouse.click(577,234, false);
+								sleep(1000);
+						}else{
+							if(s.widgets.isVisible(593, 25)){
+								s.widgets.interact(593, 25, "Choose spell");
+								sleep(1000);
+							}else{
+							s.tabs.open(Tab.ATTACK);
+							sleep(1000);
+							}
+						}
+			}else{
 			attack(name);
+			}
 		}
 
+	}
+
+	private AutocastSpell currentAutocast() {
+		if(getMagicLevel() < 9){
+			return AutocastSpell.WIND_STRIKE;
+		}
+		return AutocastSpell.FIRE_STRIKE;
+	}
+	
+	public int getMagicLevel(){
+		return getLevel(Skill.MAGIC);
 	}
 
 	public void loot() {
@@ -1258,7 +1331,14 @@ public abstract class Task {
 				return FightingAssignment.AL_KHARID_WARRIOR_RANGE;
 			}
 			
-		}if(getStage().getType() == StageType.COMBAT){
+		}else if(getStage().getSkill() == Skill.MAGIC){
+			if(getLevel(Skill.MAGIC) < 20){
+				return FightingAssignment.SEAGULL_MAGE;
+			}else{
+				return FightingAssignment.AL_KHARID_WARRIOR_RANGE;
+			}
+			
+		}else if(getStage().getType() == StageType.COMBAT){
 			if(getAttLevel() < 30){
 				return FightingAssignment.SEAGULL_RANGE;
 			}else{
@@ -1380,6 +1460,14 @@ public abstract class Task {
 		if(!Resources.BUY_LIST.isEmpty()){
 			return false;
 		}
+		if(invContains("Coins")){
+			return false;
+		}
+		if(currentFightingAssignment().getInventory() != null){
+			if(!inventoryContains(currentFightingAssignment().getInventory())){
+				return false;
+			}
+		}
 		return !needToWithdrawGear(gear) || needToDeposit();
 	}
 
@@ -1429,6 +1517,20 @@ public abstract class Task {
 		NPC banker = s.npcs.closest("Banker");
 		if (bankIsOpen()) {
 			s.bank.depositAllExcept(strings);
+			sleep(1000, 2100);
+
+		} else {
+			openBank();
+			;
+			sleep(1000, 2100);
+		}
+	}
+	
+
+	public void depositAllExcept(String strings, String string) {
+		NPC banker = s.npcs.closest("Banker");
+		if (bankIsOpen()) {
+			s.bank.depositAllExcept(strings, string);
 			sleep(1000, 2100);
 
 		} else {
@@ -1565,7 +1667,26 @@ public abstract class Task {
 						}  else if (item.equals("Trout")) {
 							ge.collectItems(false);
 							ge.createBuyOffer(item, secondPrice, 300,coinsAmount);
-						} else {
+						}	else if (item.equals("Leather")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, secondPrice, 150,coinsAmount);
+						} else if (item.equals("Thread")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 15, 300,coinsAmount);
+						}	else if (item.equals("Air rune")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 15, 1000,coinsAmount);
+						}  else if (item.equals("Mind rune")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 15, 1000,coinsAmount);
+						}	else if (item.equals("Fire rune")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 15, 1000,coinsAmount);
+						} 	else if (item.equals("Shade robe")) {
+							ge.collectItems(false);
+							ge.createBuyOffer(item, 10000, 1,coinsAmount);
+						} 
+						else {
 							ge.collectItems(false);
 							ge.createBuyOffer(item, secondPrice, 1,coinsAmount);
 						}
@@ -1883,6 +2004,10 @@ public abstract class Task {
 			if (genItem != null) {
 				if (s.bank.contains(genItem.getItemName())) {
 					if(genItem.getItemName() == "Feather"){
+						s.bank.withdraw(genItem.getItemID(), 2000);
+					} else if(genItem.getItemName() == "Leather"){
+						s.bank.withdraw(genItem.getItemID(), 2000);
+					}else if(genItem.getItemName() == "Thread"){
 						s.bank.withdraw(genItem.getItemID(), 2000);
 					}else{
 					s.bank.withdraw(genItem.getItemID(), 1);

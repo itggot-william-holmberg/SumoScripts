@@ -17,6 +17,7 @@ public class WalkToFight extends Task {
 	@Override
 	public void execute() {
 		Resources.CURRENT_STATE = "Walking to Fighting Area";
+		
 		webWalk(currentFightingAssignment().getFightArea().getRandomPosition());
 	}
 }

@@ -16,7 +16,8 @@ public enum GenItem {
 	mithrilPlateBody("Mithril platebody", 1121), mithrilFullHelm("Mithril full helm", 1159), mithrilKiteShield("Mithril kiteshield", 1197),
 	mithrilScimmy("Mithril scimitar", 1329), leatherChaps("Leather chaps", 1095), leatherVambs("Leather vambraces", 1063), coif("Leather cowl", 1167),
 	bronzeArrows("Bronze arrow", 882), diamondRing("Diamond ring", 1643), amuletOfPower("Amulet of power", 1731), greenCape("Green cape", 1027),
-	leatherBoots("Leather boots", 1061), shortbow("Shortbow", 841), studdedChaps("Studded chaps", 1097), mapleShortbow("Maple shortbow", 853), trout("Trout",333);
+	leatherBoots("Leather boots", 1061), shortbow("Shortbow", 841), studdedChaps("Studded chaps", 1097), mapleShortbow("Maple shortbow", 853), trout("Trout",333),
+	leather("Leather", 1741), needle("Needle", 1733), thread("Thread", 1734), blueWizardRobe("Blue wizard robe", 577), shadeRobe("Shade robe", 548), airStaff("Staff of air", 1381), airRune("Air rune", 556);
 
 	String itemName;
 	int id;
@@ -48,4 +49,6 @@ public enum GenItem {
 	public String toString(){
 		return itemName;
 	}
+
+
 }

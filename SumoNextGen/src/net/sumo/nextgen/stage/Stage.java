@@ -15,7 +15,7 @@ public enum Stage {
 	DEV_MODE(StageType.OTHER, Quest.RAG_AND_BONE_MAN.toString()), MINING(StageType.SKILL, Skill.MINING),
 	STRENGTH(StageType.COMBAT, Skill.STRENGTH), ATTACK(StageType.COMBAT, Skill.ATTACK), DEFENCE(StageType.COMBAT, 
 	Skill.DEFENCE), BUY_ITEMS(StageType.OTHER, Quest.A_SOULS_BANE.toString()), FISHING(StageType.SKILL, Skill.FISHING), 
-	COOKING(StageType.SKILL, Skill.COOKING), RANGE(StageType.COMBAT, Skill.RANGED);
+	COOKING(StageType.SKILL, Skill.COOKING), RANGE(StageType.COMBAT, Skill.RANGED), MAGIC(StageType.COMBAT, Skill.MAGIC), CRAFTING(StageType.SKILL, Skill.CRAFTING);
 	
 	StageType _type;
 	Skill _skill;
