@@ -128,8 +128,6 @@ public abstract class Task {
 			}
 
 			for (TaskTest task : Resources.taskTest) {
-				s.log(task.getSkill());
-				s.log(task.getLevelGoal());
 				if (task.getStage().getType() == StageType.QUEST) {
 					if (Quest.valueOf(task.getStage().getQuestName()) != null
 							&& !isQuestCompleted(Quest.valueOf(task.getStage().getQuestName()))) {
@@ -1256,9 +1254,14 @@ public abstract class Task {
 		if (shouldLoot()) {
 			loot();
 		} else {
-			if(getStage().getSkill() == Skill.MAGIC  && s.getConfigs().get(108) == 0){
+			if(getStage().getSkill() == Skill.MAGIC  && s.getConfigs().get(108) != currentAutocast()){
 						if(s.widgets.isVisible(201)){
-								s.mouse.click(577,234, false);
+								if(currentAutocast() == 3){
+								s.mouse.click(577,234, false); // click wind strike
+	
+								}else if(currentAutocast() == 9){
+								s.mouse.click(704,234, false); // click air strike
+								}
 								sleep(1000);
 						}else{
 							if(s.widgets.isVisible(593, 25)){
@@ -1276,11 +1279,11 @@ public abstract class Task {
 
 	}
 
-	private AutocastSpell currentAutocast() {
+	private int currentAutocast() {
 		if(getMagicLevel() < 9){
-			return AutocastSpell.WIND_STRIKE;
+			return 3;
 		}
-		return AutocastSpell.FIRE_STRIKE;
+		return 9;
 	}
 	
 	public int getMagicLevel(){
@@ -1464,11 +1467,22 @@ public abstract class Task {
 			return false;
 		}
 		if(currentFightingAssignment().getInventory() != null){
-			if(!inventoryContains(currentFightingAssignment().getInventory())){
-				return false;
+			for(String item : currentFightingAssignment().getInventory()) {
+				if(!invContains(item)){
+					return false;
+				}
 			}
 		}
 		return !needToWithdrawGear(gear) || needToDeposit();
+	}
+	
+	public boolean invContains(String[] string){
+		for(String item : string) {
+			if(!invContains(item)){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean needToDeposit() {

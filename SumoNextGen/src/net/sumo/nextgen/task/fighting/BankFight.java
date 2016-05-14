@@ -23,8 +23,9 @@ public class BankFight extends Task {
 		} else if(s.inventory.isFull()){
 			depositAll();
 		}
-		else if (currentFightingAssignment().getInventory() != null && !inventoryContains(currentFightingAssignment().getInventory())){
+		else if (currentFightingAssignment().getInventory() != null && !invContains(currentFightingAssignment().getInventory())){
 			Arrays.asList(currentFightingAssignment().getInventory()).forEach(item -> {
+				s.log(item);
 				if(!invContains(item)){
 					if(item.contains("rune")){
 						withdrawNeededItems(15000, item);
